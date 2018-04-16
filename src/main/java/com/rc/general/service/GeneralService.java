@@ -1,12 +1,15 @@
 package com.rc.general.service;
 
-import com.rc.general.domain.General;
+import com.rc.general.domain.TrtlGeneral;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface GeneralService {
-	Page<General> listAllByPage(Pageable pageable);
 	String takeHashrate();
 	String takeHeight();
-	void create(General general);
+	void create(TrtlGeneral general);
+	Page<TrtlGeneral> listAllByPage(Pageable pageable);
+	List<TrtlGeneral> findAllGenerals();
 }

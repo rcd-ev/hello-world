@@ -5,6 +5,21 @@
     <title></title>
 </head>
 <body>
-<p>hello world</p>
+<!--<p>hello world</p>-->
+
+<div class="container">
+    <div th:if="${not #lists.isEmpty(networks)}">
+        <p>Turtlecoin Mining Info</p>
+        <table class="table table-striped">
+            <tr>
+                <td>Hashrate</td>
+            </tr>
+            <tr th:each="net : ${networks}">
+                <td th:text="${net.hashrate}"></td>
+            </tr>
+        </table>
+    </div>
+</div>
+
 </body>
 </html>
