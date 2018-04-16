@@ -1,7 +1,8 @@
 package com.rc.pool.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.rc.general.domain.TrtlNetwork;
-import lombok.Data;
 
 import java.io.Serializable;
 
@@ -9,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -17,8 +19,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
-@Data
 @Table(name = "trtl_pool")
+@JsonIgnoreProperties(value = { "hibernateLazyInitializer", "handler"})
 public class TrtlPool implements Serializable {
 
 	@Id
@@ -36,9 +38,50 @@ public class TrtlPool implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private TrtlPoolRegion name;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "trtl_network_id", nullable = false)
+	@JsonIgnore
 	private TrtlNetwork network;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getHashrateRaw() {
+		return hashrateRaw;
+	}
+
+	public void setHashrateRaw(String hashrateRaw) {
+		this.hashrateRaw = hashrateRaw;
+	}
+
+	public String getHashrate() {
+		return hashrate;
+	}
+
+	public void setHashrate(String hashrate) {
+		this.hashrate = hashrate;
+	}
+
+	public TrtlPoolRegion getName() {
+		return name;
+	}
+
+	public void setName(TrtlPoolRegion name) {
+		this.name = name;
+	}
+
+	public TrtlNetwork getNetwork() {
+		return network;
+	}
+
+	public void setNetwork(TrtlNetwork network) {
+		this.network = network;
+	}
 
 	@Override
 	public boolean equals(Object o) {
@@ -72,4 +115,5 @@ public class TrtlPool implements Serializable {
 		result = 31 * result + (network != null ? network.hashCode() : 0);
 		return result;
 	}
+
 }

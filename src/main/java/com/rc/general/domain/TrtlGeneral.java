@@ -1,6 +1,6 @@
 package com.rc.general.domain;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
 
@@ -12,8 +12,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
-@Data
 @Table(name = "trtl_general")
+@JsonIgnoreProperties(value = { "hibernateLazyInitializer", "handler"})
 public class TrtlGeneral implements Serializable {
 
 	@Id
@@ -32,5 +32,45 @@ public class TrtlGeneral implements Serializable {
 
 	@Column(name = "difficulty")
 	private String difficulty;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getHashrateRaw() {
+		return hashrateRaw;
+	}
+
+	public void setHashrateRaw(String hashrateRaw) {
+		this.hashrateRaw = hashrateRaw;
+	}
+
+	public String getHashrate() {
+		return hashrate;
+	}
+
+	public void setHashrate(String hashrate) {
+		this.hashrate = hashrate;
+	}
+
+	public String getHeight() {
+		return height;
+	}
+
+	public void setHeight(String height) {
+		this.height = height;
+	}
+
+	public String getDifficulty() {
+		return difficulty;
+	}
+
+	public void setDifficulty(String difficulty) {
+		this.difficulty = difficulty;
+	}
 
 }
