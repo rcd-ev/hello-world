@@ -9,5 +9,5 @@ spring:
 
   datasource:
     url: jdbc:postgresql://localhost:5432/turtlecoin
-    username: postgres
+    username: supervisor
     password: network
