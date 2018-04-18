@@ -5,13 +5,39 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.rc.core.service.ApiDataService;
 import lombok.RequiredArgsConstructor;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLContexts;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.springframework.stereotype.Service;
+
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+
+import javax.net.ssl.SSLContext;
 
 @Service
 @RequiredArgsConstructor
 public class ApiDataServiceImpl implements ApiDataService {
 
 	private String takeRequest(String uri, boolean method) {
+		SSLContext sslcontext = null;
+		try {
+			sslcontext = SSLContexts.custom()
+					.loadTrustMaterial(null, new TrustSelfSignedStrategy())
+					.build();
+		} catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException e) {
+			e.printStackTrace();
+		}
+
+		SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext,
+				SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+		CloseableHttpClient httpclient = HttpClients.custom()
+				.setSSLSocketFactory(sslsf)
+				.build();
+		Unirest.setHttpClient(httpclient);
 		HttpResponse<String> body = null;
 
 		try {

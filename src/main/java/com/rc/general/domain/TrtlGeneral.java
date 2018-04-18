@@ -1,7 +1,5 @@
 package com.rc.general.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import java.io.Serializable;
 
 import javax.persistence.Column;
@@ -13,7 +11,6 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "trtl_general")
-@JsonIgnoreProperties(value = { "hibernateLazyInitializer", "handler"})
 public class TrtlGeneral implements Serializable {
 
 	@Id

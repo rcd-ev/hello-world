@@ -20,6 +20,8 @@ import java.util.List;
 public class LiveStatsDataImpl implements LiveStatsData {
 	private final ApiDataService apiDataService;
 
+	private final String hashrateURL = "https://turtle-coin.com/q/hashrate/";
+
 	private final String eutsURL = "http://eu.turtlepool.space/api/live_stats";
 	private final String atpoolURL = "http://turtle-eu.atpool.party:8117/stats";
 	private final String mine2gURL = "https://trtl.mine2gether.com/api/stats";
@@ -45,7 +47,6 @@ public class LiveStatsDataImpl implements LiveStatsData {
 			i++;
 		}
 		DecimalFormat dec = new DecimalFormat("#0.00");
-//		System.out.println(dec.format(hash) + metricUnits[i]);//todo delete
 		return dec.format(hash) + metricUnits[i]+"/s";
 	}
 
@@ -54,8 +55,16 @@ public class LiveStatsDataImpl implements LiveStatsData {
 		String hashRate = calculateHashRate(data);
 		general.setDifficulty(data.getNetwork().getDifficulty());
 		general.setHashrate(hashRateToString(hashRate));
-//		general.setHashrate(hashRate);
 		general.setHashrateRaw(hashRate);
+		general.setHeight(data.getNetwork().getHeight());
+		return general;
+	}
+
+	private TrtlGeneral fillGeneralData(TrtlData data, String hash) {
+		TrtlGeneral general = new TrtlGeneral();
+		general.setDifficulty(data.getNetwork().getDifficulty());
+		general.setHashrate(hashRateToString(hash));
+		general.setHashrateRaw(hash);
 		general.setHeight(data.getNetwork().getHeight());
 		return general;
 	}
@@ -63,7 +72,6 @@ public class LiveStatsDataImpl implements LiveStatsData {
 	private TrtlPool fillPoolData(TrtlData data, TrtlNetwork network, TrtlPoolRegion region) {
 		TrtlPool pool = new TrtlPool();
 		pool.setHashrate(hashRateToString(data.getPool().getHashrate()));
-//		pool.setHashrate(data.getPool().getHashrate());
 		pool.setHashrateRaw(data.getPool().getHashrate());
 		pool.setName(region);
 		pool.setNetwork(network);
@@ -80,27 +88,28 @@ public class LiveStatsDataImpl implements LiveStatsData {
 		TrtlNetwork network = new TrtlNetwork();
 
 		//	fetch data from endpoints
+		String genHash = apiDataService.takeGet(hashrateURL);
 		String euts = apiDataService.takeGet(eutsURL);
 		String atpool = apiDataService.takeGet(atpoolURL);
-//		String mine2g = apiDataService.takeGet(mine2gURL);
-//		String tninja = apiDataService.takeGet(tninjaURL);
-//		String zpool = apiDataService.takeGet(zpoolURL);
+		String mine2g = apiDataService.takeGet(mine2gURL);
+		String tninja = apiDataService.takeGet(tninjaURL);
+		String zpool = apiDataService.takeGet(zpoolURL);
 		String hkts = apiDataService.takeGet(hktsURL);
 		String usts = apiDataService.takeGet(ustsURL);
 		String nymine = apiDataService.takeGet(nymineURL);
-//		String inpool = apiDataService.takeGet(inpoolURL);
+		String inpool = apiDataService.takeGet(inpoolURL);
 
 		TrtlData eutsData = fromJson(euts);
 		TrtlData atpoolData = fromJson(atpool);
-//		TrtlData mine2gData = fromJson(mine2g);
-//		TrtlData tninjaData = fromJson(tninja);
-//		TrtlData zpoolData = fromJson(zpool);
+		TrtlData mine2gData = fromJson(mine2g);
+		TrtlData tninjaData = fromJson(tninja);
+		TrtlData zpoolData = fromJson(zpool);
 		TrtlData hktsData = fromJson(hkts);
 		TrtlData ustsData = fromJson(usts);
 		TrtlData nymineData = fromJson(nymine);
-//		TrtlData inpoolData = fromJson(inpool);
+		TrtlData inpoolData = fromJson(inpool);
 
-		TrtlGeneral general = fillGeneralData(eutsData);
+		TrtlGeneral general = fillGeneralData(eutsData, genHash);
 
 		List<TrtlPool> pools = new ArrayList<>();
 
@@ -108,20 +117,20 @@ public class LiveStatsDataImpl implements LiveStatsData {
 		pools.add(pool1);
 		TrtlPool pool2 = fillPoolData(atpoolData, network, TrtlPoolRegion.ATPOOL);
 		pools.add(pool2);
-//		TrtlPool pool3 = fillPoolData(mine2gData, network, TrtlPoolRegion.MINE2G);
-//		pools.add(pool3);
-//		TrtlPool pool4 = fillPoolData(tninjaData, network, TrtlPoolRegion.TNINJA);
-//		pools.add(pool4);
-//		TrtlPool pool5 = fillPoolData(zpoolData, network, TrtlPoolRegion.ZPOOL);
-//		pools.add(pool5);
+		TrtlPool pool3 = fillPoolData(mine2gData, network, TrtlPoolRegion.MINE2G);
+		pools.add(pool3);
+		TrtlPool pool4 = fillPoolData(tninjaData, network, TrtlPoolRegion.TNINJA);
+		pools.add(pool4);
+		TrtlPool pool5 = fillPoolData(zpoolData, network, TrtlPoolRegion.ZPOOL);
+		pools.add(pool5);
 		TrtlPool pool6 = fillPoolData(hktsData, network, TrtlPoolRegion.HKTS);
 		pools.add(pool6);
 		TrtlPool pool7 = fillPoolData(ustsData, network, TrtlPoolRegion.USTS);
 		pools.add(pool7);
 		TrtlPool pool8 = fillPoolData(nymineData, network, TrtlPoolRegion.NYMINE);
 		pools.add(pool8);
-//		TrtlPool pool9 = fillPoolData(inpoolData, network, TrtlPoolRegion.INPOOL);
-//		pools.add(pool9);
+		TrtlPool pool9 = fillPoolData(inpoolData, network, TrtlPoolRegion.INPOOL);
+		pools.add(pool9);
 
 		network.setGeneralNetwork(general);
 		network.setPools(pools);

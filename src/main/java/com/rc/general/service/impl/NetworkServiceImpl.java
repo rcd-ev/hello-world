@@ -4,6 +4,8 @@ import com.rc.general.dao.TrtlNetworkDao;
 import com.rc.general.domain.TrtlNetwork;
 import com.rc.general.service.NetworkService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +31,11 @@ public class NetworkServiceImpl implements NetworkService {
 	@Override
 	public List<TrtlNetwork> findAllNetworks() {
 		return networkDao.findAll();
+	}
+
+	@Override
+	public Page<TrtlNetwork> listAllByPage(Pageable pageable) {
+		return networkDao.findAll(pageable);
 	}
 
 }
