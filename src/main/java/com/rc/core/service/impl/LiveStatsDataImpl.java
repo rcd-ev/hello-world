@@ -21,7 +21,6 @@ public class LiveStatsDataImpl implements LiveStatsData {
 	private final ApiDataService apiDataService;
 
 	private final String hashrateURL = "https://turtle-coin.com/q/hashrate/";
-
 	private final String eutsURL = "http://eu.turtlepool.space/api/live_stats";
 	private final String atpoolURL = "http://turtle-eu.atpool.party:8117/stats";
 	private final String mine2gURL = "https://trtl.mine2gether.com/api/stats";
@@ -34,7 +33,7 @@ public class LiveStatsDataImpl implements LiveStatsData {
 
 	private String calculateHashRate(TrtlData data) {
 		double difficulty = Double.parseDouble(data.getNetwork().getDifficulty());
-		double coinDifficultyTarget = Double.parseDouble(data.getConfig().getCoinDifficultyTarget());
+		double coinDifficultyTarget = data.getConfig().getCoinDifficultyTarget();
 		return String.valueOf((difficulty / coinDifficultyTarget));
 	}
 

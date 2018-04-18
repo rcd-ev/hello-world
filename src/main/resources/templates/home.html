@@ -1,4 +1,5 @@
-<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:display="http://www.w3.org/1999/xhtml">
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -6,16 +7,19 @@
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.js"></script>
     <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-
+    <script type="text/javascript">
+        var network = "";
+    </script>
     <script type="text/javascript">
         $(window).load(function(){
             $('#my_modal').on('show.bs.modal', function(e) {
                 var netId = $(e.relatedTarget).data('id');
                 $(e.currentTarget).find('input[name="netId"]').val(netId);
+                network = netId;
+                showData(netId);
             });
         });
     </script>
-
 </head>
 <body>
 
@@ -27,7 +31,7 @@
             <tbody>
             <tr><td>Hashrate</td></tr>
             <tr th:each="net : ${networks}">
-                <td th:each="items : ${net.generalNetwork}"><a href="#my_modal" data-toggle="modal" th:data-id="${items.id}">
+                <td th:each="items : ${net.generalNetwork}" th:col-id="${items.id}"><a href="#my_modal" data-toggle="modal" th:data-id="${items.id}">
                     <span th:each="items : ${net.generalNetwork}" th:text="${items.hashrate}"></span></a></td>
             </tr>
             </tbody>
@@ -44,17 +48,37 @@
                 <h4 class="modal-title">Pools Information</h4>
             </div>
             <div class="modal-body">
-                <table class="table table-striped">
-                    <tbody>
-                    <tr><td>Name</td>
-                        <td>Hashrate</td>
-                    </tr>
-                    <tr th:each="net : ${networks}">
+                <input type="hidden" name="netId" id="netId" value=""/>
 
-                    </tr>
-                    </tbody>
-                </table>
+                <script>
+                    function showData(adr) {
+                        const apiURL = '/api/network';
+                        $.getJSON(apiURL + '?id=' + adr, function (data) {
+                            var htmlText = '';
+                            var dt = JSON.stringify(data);
+                            var json = JSON.parse(dt);
+
+                            htmlText = '<table class="table table-striped"><thead><tr><td>Name</td><td>Hashrate</td></tr></thead><tbody>';
+                            const $list = $('.hashes-list');
+
+                                htmlText += '<tr>';
+                                for (var pool in json.pools) {
+                                    htmlText += '<tr><td>' + json.pools[pool].name + '</td>';
+                                    htmlText += '<td>' + json.pools[pool].hashrate + '</td></tr>';
+                                }
+
+                                htmlText += '</tr>';
+
+                            htmlText += '</tbody></table>';
+                            $list.append(htmlText);
+                        });
+                    }
+                </script>
+
+                <div class="hashes-list" id="hashesList"></div>
+
             </div>
+
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>

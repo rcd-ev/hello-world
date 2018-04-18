@@ -10,6 +10,8 @@ import java.util.Optional;
 public interface NetworkService {
 	void create(TrtlNetwork network);
 	Optional<TrtlNetwork> getById(Long id);
+	TrtlNetwork getNetworkById(Long id);
 	List<TrtlNetwork> findAllNetworks();
 	Page<TrtlNetwork> listAllByPage(Pageable pageable);
+	Page<TrtlNetwork> listDescAllByPage();
 }

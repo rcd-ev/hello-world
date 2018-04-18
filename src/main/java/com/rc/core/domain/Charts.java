@@ -10,7 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Charts {
-	List<List<String>> hashrate;
-	List<List<String>> workers;
-	List<List<String>> difficulty;
+	List<List<Long>> hashrate;
+	List<List<Long>> workers;
+	List<List<Long>> difficulty;
 }

@@ -11,18 +11,18 @@ import java.util.List;
 @AllArgsConstructor
 public class Config {
 	List<Port> ports;
-	String hashrateWindow;
-	String fee;
+	Long hashrateWindow;
+	Double fee;
 	String coin;
-	String coinUnits;
-	String coinDifficultyTarget;
+	Double coinUnits;
+	Double coinDifficultyTarget;
 	String symbol;
-	String depth;
+	Long depth;
 	Donation donation;	//empty object
 	String version;
-	String minPaymentThreshold;
-	String denominationUnit;
-	String blockTime;
+	Long minPaymentThreshold;
+	Long denominationUnit;
+	Long blockTime;
 	boolean slushMiningEnabled;
-	String weight;
+	Double weight;
 }
