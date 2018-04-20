@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,7 +50,7 @@ public class GlobalInfoRestController {
 	@RequestMapping(value = "/record", method = RequestMethod.GET)
 	public Page<TrtlNetwork> testList() {
 		Pageable pageable = new PageRequest(0, 20, Sort.Direction.DESC,"id");
-		Page<TrtlNetwork> bottomPage = networkService.listAllByPage(pageable);
+		Page<TrtlNetwork> bottomPage = networkService.findAllNetworksByPage(pageable);
 		return bottomPage;
 	}
 

@@ -1,15 +1,19 @@
 package com.rc.general.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.rc.core.config.LocalDateTimeConverter;
 import com.rc.pool.domain.TrtlPool;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -38,6 +42,10 @@ public class TrtlNetwork implements Serializable {
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<TrtlPool> pools = new ArrayList<>();
 
+	@Column(name = "created")
+	@Convert(converter = LocalDateTimeConverter.class)
+	private LocalDateTime created;
+
 	public Long getId() {
 		return id;
 	}
@@ -62,4 +70,11 @@ public class TrtlNetwork implements Serializable {
 		this.pools = pools;
 	}
 
+	public LocalDateTime getCreated() {
+		return created;
+	}
+
+	public void setCreated(LocalDateTime created) {
+		this.created = created;
+	}
 }

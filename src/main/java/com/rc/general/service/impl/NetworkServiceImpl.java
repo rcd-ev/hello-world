@@ -4,6 +4,7 @@ import com.rc.general.dao.TrtlNetworkDao;
 import com.rc.general.domain.TrtlNetwork;
 import com.rc.general.service.NetworkService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +19,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class NetworkServiceImpl implements NetworkService {
 	private final TrtlNetworkDao networkDao;
+
+	@Value("${configs.pagination.page}")
+	private int pages;
 
 	@Override
 	@Transactional
@@ -41,13 +45,13 @@ public class NetworkServiceImpl implements NetworkService {
 	}
 
 	@Override
-	public Page<TrtlNetwork> listAllByPage(Pageable pageable) {
+	public Page<TrtlNetwork> findAllNetworksByPage(Pageable pageable) {
 		return networkDao.findAll(pageable);
 	}
 
 	@Override
 	public Page<TrtlNetwork> listDescAllByPage() {
-		Pageable pageable = new PageRequest(0, 20, Sort.Direction.DESC,"id");
+		Pageable pageable = new PageRequest(0, pages, Sort.Direction.DESC,"id");
 		Page<TrtlNetwork> bottomPage = networkDao.findAll(pageable);
 		return bottomPage;
 	}

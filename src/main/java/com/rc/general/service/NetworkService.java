@@ -12,6 +12,6 @@ public interface NetworkService {
 	Optional<TrtlNetwork> getById(Long id);
 	TrtlNetwork getNetworkById(Long id);
 	List<TrtlNetwork> findAllNetworks();
-	Page<TrtlNetwork> listAllByPage(Pageable pageable);
+	Page<TrtlNetwork> findAllNetworksByPage(Pageable pageable);
 	Page<TrtlNetwork> listDescAllByPage();
 }

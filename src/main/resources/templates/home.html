@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:display="http://www.w3.org/1999/xhtml">
+<html xmlns:th="http://www.thymeleaf.org">
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -25,17 +25,60 @@
 
 <div class="container">
     <div th:if="${not #lists.isEmpty(networks)}">
-        <p><h3>Turtlecoin Mining Info</h3></p>
+        <a th:href="@{${url}}"><h3>Turtlecoin Mining Info</h3></a>
+
+        <p th:text="'totalElements ' + ${totalElements}"></p>
+        <p th:text="'totalPages ' + ${totalPages}"></p>
+        <p th:text="'number ' + ${number}"></p>
+        <p th:text="'size ' + ${size}"></p>
+        <p th:text="'isSorted ' + ${isSorted}"></p>
+
+        <p th:text="'first: ' + ${first}"></p>
+        <p th:text="'last: ' + ${last}"></p>
+
+        <p th:text="'as_id: ' + ${as_id}"></p>
+        <p th:text="'ds_id: ' + ${ds_id}"></p>
+
+        <p th:text="'as_time: ' + ${as_time}"></p>
+        <p th:text="'ds_time: ' + ${ds_time}"></p>
+
+        <p th:text="'as_hashrate: ' + ${as_hashrate}"></p>
+        <p th:text="'ds_hashrate: ' + ${ds_hashrate}"></p>
 
         <table class="table table-striped">
             <tbody>
-            <tr><td>Hashrate</td></tr>
+            <tr>
+                <td>Id
+                    <a th:href="'?sort=id,asc' +'&page='+ ${number}"><span class="glyphicon glyphicon-chevron-up"></span></a>
+                    <a th:href="'?sort=id,desc'+'&page='+ ${number}"><span class="glyphicon glyphicon-chevron-down"></span></a>
+                </td>
+                <td>Time
+                    <a th:href="'?sort=created,asc'+'&page=' + ${number}"><span class="glyphicon glyphicon-chevron-up"></span></a>
+                    <a th:href="'?sort=created,desc'+'&page='+ ${number}"><span class="glyphicon glyphicon-chevron-down"></span></a>
+                </td>
+                <td>Hashrate
+                    <a th:href="'?sort=generalNetwork.hashrate,asc' + '&page=' + ${number}"><span class="glyphicon glyphicon-chevron-up"></span></a>
+                    <a th:href="'?sort=generalNetwork.hashrate,desc'+ '&page=' + ${number}"><span class="glyphicon glyphicon-chevron-down"></span></a>
+                </td>
+            </tr>
             <tr th:each="net : ${networks}">
+                <td th:each="items : ${net.generalNetwork}" th:col-id="${items.id}" th:text="${items.id}"></td>
+                <td th:each="items : ${net.generalNetwork}" th:col-id="${items.id}" th:text="${net.created}"></td>
                 <td th:each="items : ${net.generalNetwork}" th:col-id="${items.id}"><a href="#my_modal" data-toggle="modal" th:data-id="${items.id}">
                     <span th:each="items : ${net.generalNetwork}" th:text="${items.hashrate}"></span></a></td>
             </tr>
             </tbody>
         </table>
+        <div>
+            <ul class="pagination">
+                <li th:each='i : ${#numbers.sequence(0,page.totalPages-1)}' style="display:inline">
+                    <span th:if='${i}==${page.number}' th:text='${i+1}'>1</span>
+                    <a th:if='${i}!=${page.number}' th:href="@{${url}(page=${i})}">
+                        <span th:text='${i+1}'>1</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
 
 </div>

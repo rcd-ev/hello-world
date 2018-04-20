@@ -15,3 +15,20 @@ spring:
     serialization:
       write_dates_as_timestamps: false
       fail-on-empty-beans: false
+
+configs:
+  scheduler:
+    rate: 5000
+  pagination:
+    page: 20
+  pools:
+    hashrateURL: https://turtle-coin.com/q/hashrate/
+    eutsURL: http://eu.turtlepool.space/api/live_stats
+    atpoolURL: http://turtle-eu.atpool.party:8117/stats
+    mine2gURL: https://trtl.mine2gether.com/api/stats
+    tninjaURL: https://trtl.ninja/api/stats
+    zpoolURL: https://z-pool.com/api/stats
+    hktsURL: http://hk.turtlepool.space/api/stats
+    ustsURL: http://us.turtlepool.space/api/stats
+    nymineURL: http://ny.minetrtl.us:8117/stats
+    inpoolURL: https://auspool.turtleco.in/api/stats

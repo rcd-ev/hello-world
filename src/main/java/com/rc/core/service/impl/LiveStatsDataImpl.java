@@ -9,9 +9,11 @@ import com.rc.general.domain.TrtlNetwork;
 import com.rc.pool.domain.TrtlPool;
 import com.rc.pool.domain.TrtlPoolRegion;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,16 +22,35 @@ import java.util.List;
 public class LiveStatsDataImpl implements LiveStatsData {
 	private final ApiDataService apiDataService;
 
-	private final String hashrateURL = "https://turtle-coin.com/q/hashrate/";
-	private final String eutsURL = "http://eu.turtlepool.space/api/live_stats";
-	private final String atpoolURL = "http://turtle-eu.atpool.party:8117/stats";
-	private final String mine2gURL = "https://trtl.mine2gether.com/api/stats";
-	private final String tninjaURL = "https://trtl.ninja/api/stats";
-	private final String zpoolURL = "https://z-pool.com/api/stats";
-	private final String hktsURL = "http://hk.turtlepool.space/api/stats";
-	private final String ustsURL = "http://us.turtlepool.space/api/stats";
-	private final String nymineURL = "http://ny.minetrtl.us:8117/stats";
-	private final String inpoolURL = "https://auspool.turtleco.in/api/stats";
+	@Value("${configs.pools.hashrateURL}")
+	private String hashrateURL;
+
+	@Value("${configs.pools.eutsURL}")
+	private String eutsURL;
+
+	@Value("${configs.pools.atpoolURL}")
+	private String atpoolURL;
+
+	@Value("${configs.pools.mine2gURL}")
+	private String mine2gURL;
+
+	@Value("${configs.pools.tninjaURL}")
+	private String tninjaURL;
+
+	@Value("${configs.pools.zpoolURL}")
+	private String zpoolURL;
+
+	@Value("${configs.pools.hktsURL}")
+	private String hktsURL;
+
+	@Value("${configs.pools.ustsURL}")
+	private String ustsURL;
+
+	@Value("${configs.pools.nymineURL}")
+	private String nymineURL;
+
+	@Value("${configs.pools.inpoolURL}")
+	private String inpoolURL;
 
 	private String calculateHashRate(TrtlData data) {
 		double difficulty = Double.parseDouble(data.getNetwork().getDifficulty());
@@ -131,8 +152,11 @@ public class LiveStatsDataImpl implements LiveStatsData {
 		TrtlPool pool9 = fillPoolData(inpoolData, network, TrtlPoolRegion.INPOOL);
 		pools.add(pool9);
 
+		LocalDateTime now = LocalDateTime.now();
+
 		network.setGeneralNetwork(general);
 		network.setPools(pools);
+		network.setCreated(now);
 
 		return network;
 	}
