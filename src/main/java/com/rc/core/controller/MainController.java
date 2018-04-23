@@ -4,11 +4,9 @@ import com.rc.general.domain.TrtlNetwork;
 import com.rc.general.service.GeneralService;
 import com.rc.general.service.NetworkService;
 import com.rc.pool.service.PoolService;
-import javassist.runtime.Desc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -18,10 +16,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class MainController {
@@ -36,12 +35,13 @@ public class MainController {
 	private PoolService poolService;
 
 	@Value("${configs.pagination.page}")
-	private int paginationPage;
+	private int pageSize;
 
 	@GetMapping
 	@RequestMapping("/")
 	public String mainPage(@SortDefault.SortDefaults({@SortDefault(sort = "id", direction = Sort.Direction.DESC)})
-	@PageableDefault(size = 20) Pageable pageable, Model model) {
+	@PageableDefault(size = 20) Pageable pageable, Model model, HttpServletRequest request) {
+		Object query = request.getAttribute("javax.servlet.forward.query_string");
 
 		Page<TrtlNetwork> pages = networkService.findAllNetworksByPage(pageable);
 
@@ -63,6 +63,8 @@ public class MainController {
 		model.addAttribute("ds_time", pages.getSort().descending().getOrderFor("created"));
 		model.addAttribute("as_hashrate", pages.getSort().ascending().getOrderFor("generalNetwork.hashrate"));
 		model.addAttribute("ds_hashrate", pages.getSort().descending().getOrderFor("generalNetwork.hashrate"));
+		model.addAttribute("uri", request.getQueryString());
+		model.addAttribute("urii", networkService.parseUri(request.getQueryString()));
 
 		return "home";
 	}

@@ -4,6 +4,7 @@ import com.rc.general.dao.TrtlNetworkDao;
 import com.rc.general.domain.TrtlNetwork;
 import com.rc.general.service.NetworkService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -54,6 +55,20 @@ public class NetworkServiceImpl implements NetworkService {
 		Pageable pageable = new PageRequest(0, pages, Sort.Direction.DESC,"id");
 		Page<TrtlNetwork> bottomPage = networkDao.findAll(pageable);
 		return bottomPage;
+	}
+
+	@Override
+	public String parseUri(String str) {
+		String result = "";
+		if (StringUtils.isEmpty(str)){
+			return null;
+		} else {
+			String[] query = str.split("&page");
+			result = query[0];
+			result = result.replace("%3D", "=");
+
+			return result;
+		}
 	}
 
 }

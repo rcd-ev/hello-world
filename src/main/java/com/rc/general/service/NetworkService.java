@@ -14,4 +14,5 @@ public interface NetworkService {
 	List<TrtlNetwork> findAllNetworks();
 	Page<TrtlNetwork> findAllNetworksByPage(Pageable pageable);
 	Page<TrtlNetwork> listDescAllByPage();
+	String parseUri(String str);
 }

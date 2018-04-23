@@ -9,6 +9,10 @@
     <link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <script type="text/javascript">
         var network = "";
+        var old = new Array();
+        var temp = new Array();
+        var rows = new Array();
+        var rate = 10000;
     </script>
     <script type="text/javascript">
         $(window).load(function(){
@@ -20,6 +24,95 @@
             });
         });
     </script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            console.log("document loaded");
+
+            function poolData() {
+                $.ajax({
+                    url: '/api/record',
+                    type: "get",
+                    dataType: "json",
+                    success: function (response) {
+
+                        //new data from pg endpoint
+                        var tmp = "";
+                        var dt = JSON.stringify(response);
+                        var json = JSON.parse(dt);
+//                                console.log(json);
+
+//                                for(i )
+
+                        $.each(response, function(i, net) {
+                            $.each(net, function(j, item){
+                                temp = temp + item;
+//                                console.log(temp);
+                            })
+                        })
+
+                        console.log(response);
+
+//                        console.log("success");
+                    }
+                });
+                renderTable();
+                updateTable();
+                renderHeader();
+            }
+            setInterval(function() {poolData();}, rate);
+        });
+
+        function renderTable() {
+            var html = "";
+
+            $(".resultTable").empty();
+
+            for (i = rows.length - 1; i >= 0; i--) {
+                html += "<tr>";
+                var rowx = rows[i];
+                for (j = 0; j < rowx.length - 1; j++) {
+                    html += '<td>' + rowx[j] + '</td>';
+                }
+                html += '</tr>';
+            }
+
+            $(".resultTable").append(html);
+        }
+
+        function updateTable() {
+
+        }
+
+        function renderHeader() {
+
+            var header = "";
+
+            header = "<table class=\"table table-striped\"><tbody>";
+            header += "<tr><td>Id <a href=\"http://localhost:9000?sort=id,asc\"><span class=\"glyphicon glyphicon-chevron-up\"></span></a>";
+            header += "<a href=\"http://localhost:9000?sort=id,desc\"><span class=\"glyphicon glyphicon-chevron-down\"></span></a></td>";
+            header += "<td>Time <a href=\"http://localhost:9000?sort=created,asc\"><span class=\"glyphicon glyphicon-chevron-up\"></span></a>";
+            header += "<a href=\"http://localhost:9000?sort=created,desc\"><span class=\"glyphicon glyphicon-chevron-down\"></span></a></td>";
+            header += "<td>Hashrate <a href=\"http://localhost:9000?sort=generalNetwork.hashrate,asc\"><span class=\"glyphicon glyphicon-chevron-up\"></span></a>";
+            header += "<a href=\"http://localhost:9000?sort=generalNetwork.hashrate,desc\"><span class=\"glyphicon glyphicon-chevron-down\"></span></a></td>";
+            header += "</tr>";
+
+            header +=" </tbody></table>";
+
+            $(".resultTable").append(header);
+
+            /*
+             <tr>
+             <td>Id
+             <a th:href="@{${url}(sort='id,asc',page=${number})}"><span class="glyphicon glyphicon-chevron-up"></span></a>
+             <a th:href="@{${url}(sort='id,desc',page=${number})}"><span class="glyphicon glyphicon-chevron-down"></span></a>
+             </td>
+             */
+
+        }
+
+    </script>
+
 </head>
 <body>
 
@@ -27,39 +120,35 @@
     <div th:if="${not #lists.isEmpty(networks)}">
         <a th:href="@{${url}}"><h3>Turtlecoin Mining Info</h3></a>
 
-        <p th:text="'totalElements ' + ${totalElements}"></p>
-        <p th:text="'totalPages ' + ${totalPages}"></p>
-        <p th:text="'number ' + ${number}"></p>
-        <p th:text="'size ' + ${size}"></p>
-        <p th:text="'isSorted ' + ${isSorted}"></p>
+        <!--<p th:text="'totalElements ' + ${totalElements}"></p>-->
+        <!--<p th:text="'totalPages ' + ${totalPages}"></p>-->
+        <!--<p th:text="'number ' + ${number}"></p>-->
+        <!--<p th:text="'size ' + ${size}"></p>-->
+        <!--<p th:text="'isSorted ' + ${isSorted}"></p>-->
 
-        <p th:text="'first: ' + ${first}"></p>
-        <p th:text="'last: ' + ${last}"></p>
+        <!--<p th:text="'first: ' + ${first}"></p>-->
+        <!--<p th:text="'last: ' + ${last}"></p>-->
 
-        <p th:text="'as_id: ' + ${as_id}"></p>
-        <p th:text="'ds_id: ' + ${ds_id}"></p>
+        <!--<p th:text="'as_id: ' + ${as_id}"></p>-->
+        <!--<p th:text="'ds_id: ' + ${ds_id}"></p>-->
 
-        <p th:text="'as_time: ' + ${as_time}"></p>
-        <p th:text="'ds_time: ' + ${ds_time}"></p>
+        <!--<p th:text="'as_time: ' + ${as_time}"></p>-->
+        <!--<p th:text="'ds_time: ' + ${ds_time}"></p>-->
 
-        <p th:text="'as_hashrate: ' + ${as_hashrate}"></p>
-        <p th:text="'ds_hashrate: ' + ${ds_hashrate}"></p>
+        <!--<p th:text="'as_hashrate: ' + ${as_hashrate}"></p>-->
+        <!--<p th:text="'ds_hashrate: ' + ${ds_hashrate}"></p>-->
 
+        <!--<p th:text="'uri: ' + ${uri}"></p>-->
+        <!--<p th:text="'urii: ' + ${urii}"></p>-->
+
+
+        <div class="resultTable">
         <table class="table table-striped">
             <tbody>
             <tr>
-                <td>Id
-                    <a th:href="'?sort=id,asc' +'&page='+ ${number}"><span class="glyphicon glyphicon-chevron-up"></span></a>
-                    <a th:href="'?sort=id,desc'+'&page='+ ${number}"><span class="glyphicon glyphicon-chevron-down"></span></a>
-                </td>
-                <td>Time
-                    <a th:href="'?sort=created,asc'+'&page=' + ${number}"><span class="glyphicon glyphicon-chevron-up"></span></a>
-                    <a th:href="'?sort=created,desc'+'&page='+ ${number}"><span class="glyphicon glyphicon-chevron-down"></span></a>
-                </td>
-                <td>Hashrate
-                    <a th:href="'?sort=generalNetwork.hashrate,asc' + '&page=' + ${number}"><span class="glyphicon glyphicon-chevron-up"></span></a>
-                    <a th:href="'?sort=generalNetwork.hashrate,desc'+ '&page=' + ${number}"><span class="glyphicon glyphicon-chevron-down"></span></a>
-                </td>
+                <td>Id <a th:href="@{${url}(sort='id,asc',page=${number})}"><span class="glyphicon glyphicon-chevron-up"></span></a><a th:href="@{${url}(sort='id,desc',page=${number})}"><span class="glyphicon glyphicon-chevron-down"></span></a></td>
+                <td>Time <a th:href="@{${url}(sort='created,asc',page=${number})}"><span class="glyphicon glyphicon-chevron-up"></span></a><a th:href="@{${url}(sort='created,desc',page=${number})}"><span class="glyphicon glyphicon-chevron-down"></span></a></td>
+                <td>Hashrate <a th:href="@{${url}(sort='generalNetwork.hashrate,asc',page=${number})}"><span class="glyphicon glyphicon-chevron-up"></span></a><a th:href="@{${url}(sort='generalNetwork.hashrate,desc',page=${number})}"><span class="glyphicon glyphicon-chevron-down"></span></a></td>
             </tr>
             <tr th:each="net : ${networks}">
                 <td th:each="items : ${net.generalNetwork}" th:col-id="${items.id}" th:text="${items.id}"></td>
@@ -69,18 +158,34 @@
             </tr>
             </tbody>
         </table>
+    </div>
+
         <div>
             <ul class="pagination">
                 <li th:each='i : ${#numbers.sequence(0,page.totalPages-1)}' style="display:inline">
                     <span th:if='${i}==${page.number}' th:text='${i+1}'>1</span>
-                    <a th:if='${i}!=${page.number}' th:href="@{${url}(page=${i})}">
+                    <a th:if='${i}!=${page.number} and ${urii}==null' th:href="@{${url}(page=${i})}">
+                        <span th:text='${i+1}'>1</span>
+                    </a>
+                    <a th:if='${i}!=${page.number} and ${urii}!=null' th:href="@{${url}(${urii},page=${i})}">
                         <span th:text='${i+1}'>1</span>
                     </a>
                 </li>
             </ul>
         </div>
-    </div>
 
+        <!--<div>-->
+            <!--<ul class="pagination">-->
+                <!--<li th:each='i : ${#numbers.sequence(0,page.totalPages-1)}' style="display:inline">-->
+                    <!--<span th:if='${i}==${page.number}' th:text='${i+1}'>1</span>-->
+                    <!--<a th:if='${i}!=${page.number}' th:href="@{${url}(page=${i})}">-->
+                        <!--<span th:text='${i+1}'>1</span>-->
+                    <!--</a>-->
+                <!--</li>-->
+            <!--</ul>-->
+        <!--</div>-->
+
+    </div>
 </div>
 
 <div class="modal" id="my_modal">
@@ -92,34 +197,28 @@
             </div>
             <div class="modal-body">
                 <input type="hidden" name="netId" id="netId" value=""/>
-
                 <script>
                     function showData(adr) {
                         const apiURL = '/api/network';
                         $.getJSON(apiURL + '?id=' + adr, function (data) {
-                            var htmlText = '';
+                            var htmlText = "";
                             var dt = JSON.stringify(data);
                             var json = JSON.parse(dt);
 
                             htmlText = '<table class="table table-striped"><thead><tr><td>Name</td><td>Hashrate</td></tr></thead><tbody>';
-                            const $list = $('.hashes-list');
-
+                            $(".hashes-list").empty();
                                 htmlText += '<tr>';
                                 for (var pool in json.pools) {
                                     htmlText += '<tr><td>' + json.pools[pool].name + '</td>';
                                     htmlText += '<td>' + json.pools[pool].hashrate + '</td></tr>';
                                 }
-
                                 htmlText += '</tr>';
-
                             htmlText += '</tbody></table>';
-                            $list.append(htmlText);
+                            $(".hashes-list").append(htmlText);
                         });
                     }
                 </script>
-
                 <div class="hashes-list" id="hashesList"></div>
-
             </div>
 
             <div class="modal-footer">

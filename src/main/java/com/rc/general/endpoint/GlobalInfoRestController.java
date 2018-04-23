@@ -4,6 +4,7 @@ import com.rc.general.domain.TrtlNetwork;
 import com.rc.general.service.GeneralService;
 import com.rc.general.service.NetworkService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,20 +26,23 @@ public class GlobalInfoRestController {
 	private final GeneralService api;
 	private final NetworkService networkService;
 
+	@Value("${configs.pagination.page}")
+	private int pageSize;
+
 	@RequestMapping(value = "/hashrate", method = RequestMethod.GET)
 	String generalHashrate() {
 		return api.takeHashrate();
 	}
 
 	@RequestMapping("/api/network")
-	public TrtlNetwork findById(@RequestParam("id") long id){
+	public TrtlNetwork findNetworkById(@RequestParam("id") long id){
 		TrtlNetwork networks = networkService.getNetworkById(id);
 		return networks;
 	}
 
 	@GetMapping
 	@RequestMapping(value = "/list", method = RequestMethod.GET, produces = "application/json")
-	public ResponseEntity<List<TrtlNetwork>> listAllNet() {
+	public ResponseEntity<List<TrtlNetwork>> listAllNetwork() {
 		List<TrtlNetwork> networks = networkService.findAllNetworks();
 		if (networks.isEmpty()) {
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -47,9 +51,9 @@ public class GlobalInfoRestController {
 	}
 
 	@GetMapping
-	@RequestMapping(value = "/record", method = RequestMethod.GET)
-	public Page<TrtlNetwork> testList() {
-		Pageable pageable = new PageRequest(0, 20, Sort.Direction.DESC,"id");
+	@RequestMapping(value = "/api/record", method = RequestMethod.GET)
+	public Page<TrtlNetwork> lastNetworkList() {
+		Pageable pageable = new PageRequest(0, pageSize, Sort.Direction.DESC,"id");
 		Page<TrtlNetwork> bottomPage = networkService.findAllNetworksByPage(pageable);
 		return bottomPage;
 	}

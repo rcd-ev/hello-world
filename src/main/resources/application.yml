@@ -16,6 +16,10 @@ spring:
       write_dates_as_timestamps: false
       fail-on-empty-beans: false
 
+  data:
+    rest:
+      default-page-size: 20
+
 configs:
   scheduler:
     rate: 5000
