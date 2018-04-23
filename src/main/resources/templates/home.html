@@ -9,10 +9,22 @@
     <link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <script type="text/javascript">
         var network = "";
-        var old = new Array();
-        var temp = new Array();
-        var rows = new Array();
         var rate = 10000;
+        var tab = new Array();
+        var temp = new Array();
+        var tempA = new Array();
+        var vx = new Array();
+        var rows = new Array();
+        var old = new Array();
+        var tempo = new Array();
+        var match = new Array();
+        var matchA = new Array();
+        var finalA = new Array();
+        var rowCount = $("#trtl  td").closest("tr").length;
+        var max = 1;
+        var maxUpdate = 1;
+        var jsonCount = 0;
+        var jsonjs;
     </script>
     <script type="text/javascript">
         $(window).load(function(){
@@ -26,93 +38,306 @@
     </script>
 
     <script type="text/javascript">
-        $(document).ready(function () {
-            console.log("document loaded");
+        $(window).load(function(){
+            $('#my_modal').on('show.bs.modal', function(e) {
+                var netId = $(e.relatedTarget).data('id');
+                $(e.currentTarget).find('input[name="netId"]').val(netId);
+                network = netId;
+                showData(netId);
+            });
+        });
+    </script>
 
+    <script type="text/javascript">
+        $(document).ready(function () {
             function poolData() {
                 $.ajax({
                     url: '/api/record',
                     type: "get",
                     dataType: "json",
                     success: function (response) {
-
                         //new data from pg endpoint
                         var tmp = "";
                         var dt = JSON.stringify(response);
-                        var json = JSON.parse(dt);
-//                                console.log(json);
+                        jsonjs = JSON.parse(dt);
 
-//                                for(i )
-
-                        $.each(response, function(i, net) {
-                            $.each(net, function(j, item){
-                                temp = temp + item;
-//                                console.log(temp);
-                            })
-                        })
-
-                        console.log(response);
-
-//                        console.log("success");
+                        for (i = 0; i < rowCount; i++) {
+                            tab[i] = new Array(i);
+                            for (j = 0; j < rows[i].length; j++) {
+                                if (j == 0) {
+                                    tab[i][j] = jsonjs.content[i].generalNetwork.id;
+                                }
+                                if (j == 1) {
+                                    tab[i][j] = jsonjs.content[i].created;
+                                }
+                                if (j == 2) {
+                                    tab[i][j] = jsonjs.content[i].generalNetwork.hashrate;
+                                }
+                            }
+                        }
                     }
                 });
-                renderTable();
-                updateTable();
-                renderHeader();
+
+/////////////////////////////////////////////////////////////
+  /*
+                var headers = "";
+                $("#trtl").empty();
+                headers += "<thead>";
+                headers += "<tr>";
+                headers += "<th>Id <a href=\"?sort=id,asc\"><span class=\"glyphicon glyphicon-chevron-up\"></span></a><a href=\"?sort=id,desc\"><span class=\"glyphicon glyphicon-chevron-down\"></span></a></th>";
+                headers += "<th>Time <a href=\"?sort=created,asc\"><span class=\"glyphicon glyphicon-chevron-up\"></span></a><a href=\"?sort=created,desc\"><span class=\"glyphicon glyphicon-chevron-down\"></span></a></th>";
+                headers += "<th>Hashrate <a href=\"?sort=generalNetwork.hashrate,asc\"><span class=\"glyphicon glyphicon-chevron-up\"></span></a><a href=\"?sort=generalNetwork.hashrate,desc\"><span class=\"glyphicon glyphicon-chevron-down\"></span></a></th>";
+                headers += "</tr></thead><tbody>";
+
+                for(i=1; i<$(finalA).length + 1; i++) {
+                    headers += "<tr>";
+                    var idd;
+                    for(j=0; j<$(finalA[i]).length; j++) {
+                        if(j==0 && i!=0){
+                            idd = $(finalA[i][j]).text();
+                            headers += "<td col-id=\"" + $(finalA[i][i]).text() + "\">" + $(finalA[i][j]).text() + "</td>";
+                        }
+                        if(j==1 && i!=0){
+                            headers += "<td col-id=\"" + idd + "\">" + $(finalA[i][j]).text() + "</td>";
+                        }
+                        if(j==2 && i!=0){
+                            //headers += "<td></td>";
+                            headers += "<td col-id=\"" + idd + "\">" +
+                                "<a href=\"#my_modal\" data-toggle=\"modal\" data-id=" + idd + ">" +
+                                "<span>" + $(finalA[i][j]).text() + "</span></a>"+"</td>";
+                        }
+                    }
+                    headers += "</tr>";
+                }
+                headers += "</tbody>";
+                $("#trtl").append(headers);
+
+*/
+/////////////////////////////////////////////////////////////
+
+                //render
+/*                var headers = "";
+                $("#trtl").empty();
+                headers += "<thead>";
+                headers += "<tr>";
+                headers += "<th>Id <a href=\"?sort=id,asc\"><span class=\"glyphicon glyphicon-chevron-up\"></span></a><a href=\"?sort=id,desc\"><span class=\"glyphicon glyphicon-chevron-down\"></span></a></th>";
+                headers += "<th>Time <a href=\"?sort=created,asc\"><span class=\"glyphicon glyphicon-chevron-up\"></span></a><a href=\"?sort=created,desc\"><span class=\"glyphicon glyphicon-chevron-down\"></span></a></th>";
+                headers += "<th>Hashrate <a href=\"?sort=generalNetwork.hashrate,asc\"><span class=\"glyphicon glyphicon-chevron-up\"></span></a><a href=\"?sort=generalNetwork.hashrate,desc\"><span class=\"glyphicon glyphicon-chevron-down\"></span></a></th>";
+                headers += "</tr></thead><tbody>";
+
+                for(i=1;i<$(old).length + 1;i++) {
+                    headers += "<tr>";
+                    var idd;
+                    for(j=0; j<$(old[i]).length; j++) {
+                        if(j==0 && i!=0){
+                            idd = $(old[i][j]).text();
+                            headers += "<td col-id=\"" + $(old[i][i]).text() + "\">" + $(old[i][j]).text() + "</td>";
+                        }
+                        if(j==1 && i!=0){
+                            headers += "<td col-id=\"" + idd + "\">" + $(old[i][j]).text() + "</td>";
+                        }
+                        if(j==2 && i!=0){
+                            headers += "<td col-id=\"" + idd + "\">" +
+                                "<a href=\"#my_modal\" data-toggle=\"modal\" data-id=" + idd + ">" +
+                                "<span>" + $(old[i][j]).text() + "</span></a>"+"</td>";
+                        }
+                    }
+                    headers += "</tr>";
+                }
+                headers += "</tbody>";
+                $("#trtl").append(headers);
+                */
+
+//--------------------------------------------------------------------------------
+
+                updateTbl();
+                renderTbl();
             }
             setInterval(function() {poolData();}, rate);
         });
 
-        function renderTable() {
-            var html = "";
+        function updateTbl() {
+//            console.log(tab);
+            //update
+            rowCount = $("#trtl  td").closest("tr").length;
+            //get old html content
+            for(i=0;i<rowCount+1;i++) {
+                rows[i]=document.getElementById("trtl").rows[i].cells;
+                old[i] = new Array(i);
+                for(j=0; j<rows[i].length; j++) {
+                    rows[i][j]=$(rows[i][j]).text();
+                    rows[i][j]=$(rows[i][j]).children('td').text();
 
-            $(".resultTable").empty();
+                    var v = rows[i][j];
+                    if(i==0){
+                        old[i][j] = rows[i][j];
+                    }
+                    if(j==0 && i!=0){
+                        if($(v).text()>max){
+                            max=$(v).text();
+                        }
+                        old[i][j] = $(v).text();
+                    }
 
-            for (i = rows.length - 1; i >= 0; i--) {
-                html += "<tr>";
-                var rowx = rows[i];
-                for (j = 0; j < rowx.length - 1; j++) {
-                    html += '<td>' + rowx[j] + '</td>';
+                    old[i][j] = rows[i][j];
+                    //var www = old[i][j];
+                    //console.log($(old[i][j]).text());
                 }
-                html += '</tr>';
             }
 
-            $(".resultTable").append(html);
+            for(i=0;i<rowCount+1;i++) {
+                temp[i] = new Array(i);
+                //  for (j = 0, k=1; j < rows[i].length; j++,k++) {
+                for (j = 0; j < rows[i].length; j++) {
+                    temp[i][j] = old[i][j];
+                    //console.log($(temp[i][j]).text());
+                    //tempA[i] = temp[k][j];
+                }
+            }
+
+//               temp -> stara tablica
+//               tab  -> nowa  tablica
+//               key, tempA  -> połaczana
+
+            for(i=0;i<rowCount+1;i++) {
+                tempA[i] = new Array(i);
+                for (j = 0; j < rows[i].length; j++) {
+                    tempA[i][j] = $(temp[i][j]);
+                }
+            }
+
+//            console.log("TEMPA: ");
+//            console.log(tempA);
+//            console.log("TAB: ");
+//            console.log(tab);
+
+            for(i=0; i<rowCount; i++) {
+                vx[i] = new Array(i);
+                for (j = 0; j < rows[i].length; j++) {
+
+
+
+                    //tempA[i][j] = temp[i][j];
+//                        if( tab[i][0].text()> tempA[i][0].text()){
+//                            tempA[i][j] = tab[i][j];
+//                            jsonCount++
+//                        }
+//                        if(tab.indexOf(max) !== -1) {
+//                        }
+                    //vx[i][j] = tab[i][0];
+//                        if (j == 0) {
+//                                if($(vx)>max){
+//                                    tempA[i][j] = tab[i][j];
+                    //tempA.unshift(tab[i][j]);
+                    //jsonCount++;
+//                                }
+//                            }
+//                        key =
+                    //key.push()
+                    // console.log($(temp[i][j]).text());
+
+                }
+            }
+
+            // console.log("jsc: " + jsonCount);
+            // console.log(tempA);
+
+            for(i=0;i<rowCount;i++) {
+                matchA[i] = new Array(i);
+                for (j = 0; j < rows[i].length; j++) {
+
+                    // matchA[i][j] =
+                    //temp.shift();
+                    //console.log(temp);
+                    // matchA[i][j] = temp[i][j];
+                }
+            }
+//                for(i=0;i<rowCount;i++) {
+//                    matchA[i] = new Array(i);
+//                    for (j = 0; j < rows[i].length; j++) {
+//                        matchA[i][j] = old.
+//                    }
+//                }
+
+//                for(i=0;i<rowCount+1;i++) {
+//                    match[i] = new Array(i);
+//                    for (j = 0; j < rows[i].length; j++) {
+//                        match[i][j] = old[i][j];
+//                        if (match.indexOf('432') !== -1) {
+//                            console.log('index ' + match.indexOf('432'));
+//                        }
+//                        console.log('index ' + match.indexOf('432'));
+//                    }
+//                }
+
+            //match contents
+            for(i=0;i<rowCount+1;i++) {
+                finalA[i] = new Array(i);
+                for(j=0; j<rows[i].length; j++) {
+                    finalA[i][j] = tempA[i][j];
+                }
+            }
+
+            console.log("FINAL-A: ");
+            console.log(finalA);
+
+//            finalA.unshift(tab.splice(2, 1));
+
+            finalA.shift();
+            finalA.unshift($(tab[0]));
+            finalA.unshift($(tab[1]));
+            finalA.unshift($(tab[2]));
+            finalA.unshift($(tab[3]));
+            finalA.unshift($(tab[4]));
+
+            finalA.pop();
+            finalA.pop();
+            finalA.pop();
+            finalA.pop();
+            finalA.pop();
+
+//               finalA.unshift(old[0]); //dodanie nagłówka
+//                finalA.unshift(old[0]); //dodanie nagłówka
+//                finalA.pop(); //usunięcie ostatniego wiersza
+//              console.log(finalA); //na końcu zamienić $old na $finalA
+
         }
 
-        function updateTable() {
+        function renderTbl() {
+            var headers = "";
+            $("#trtl").empty();
+            headers += "<thead>";
+            headers += "<tr>";
+            headers += "<th>Id <a href=\"?sort=id,asc\"><span class=\"glyphicon glyphicon-chevron-up\"></span></a><a href=\"?sort=id,desc\"><span class=\"glyphicon glyphicon-chevron-down\"></span></a></th>";
+            headers += "<th>Time <a href=\"?sort=created,asc\"><span class=\"glyphicon glyphicon-chevron-up\"></span></a><a href=\"?sort=created,desc\"><span class=\"glyphicon glyphicon-chevron-down\"></span></a></th>";
+            headers += "<th>Hashrate <a href=\"?sort=generalNetwork.hashrate,asc\"><span class=\"glyphicon glyphicon-chevron-up\"></span></a><a href=\"?sort=generalNetwork.hashrate,desc\"><span class=\"glyphicon glyphicon-chevron-down\"></span></a></th>";
+            headers += "</tr></thead><tbody>";
 
+            for(i=1; i<$(finalA).length + 1; i++) {
+                headers += "<tr>";
+                var idd;
+                for(j=0; j<$(finalA[i]).length; j++) {
+                    if(j==0 && i!=0){
+                        console.log("id :"+ $(finalA[i][j]).text());
+                        idd = $(finalA[i][j]).text();
+                        headers += "<td col-id=\"" + $(finalA[i][i]).text() + "\">" + $(finalA[i][j]).text() + "</td>";
+                    }
+                    if(j==1 && i!=0){
+                        headers += "<td col-id=\"" + idd + "\">" + $(finalA[i][j]).text() + "</td>";
+                    }
+                    if(j==2 && i!=0){
+                        headers += "<td col-id=\"" + idd + "\">" +
+                            "<a href=\"#my_modal\" data-toggle=\"modal\" data-id=" + idd + ">" +
+                            "<span>" + $(finalA[i][j]).text() + "</span></a>"+"</td>";
+                    }
+
+                }
+                headers += "</tr>";
+            }
+            headers += "</tbody>";
+            $("#trtl").append(headers);
         }
-
-        function renderHeader() {
-
-            var header = "";
-
-            header = "<table class=\"table table-striped\"><tbody>";
-            header += "<tr><td>Id <a href=\"http://localhost:9000?sort=id,asc\"><span class=\"glyphicon glyphicon-chevron-up\"></span></a>";
-            header += "<a href=\"http://localhost:9000?sort=id,desc\"><span class=\"glyphicon glyphicon-chevron-down\"></span></a></td>";
-            header += "<td>Time <a href=\"http://localhost:9000?sort=created,asc\"><span class=\"glyphicon glyphicon-chevron-up\"></span></a>";
-            header += "<a href=\"http://localhost:9000?sort=created,desc\"><span class=\"glyphicon glyphicon-chevron-down\"></span></a></td>";
-            header += "<td>Hashrate <a href=\"http://localhost:9000?sort=generalNetwork.hashrate,asc\"><span class=\"glyphicon glyphicon-chevron-up\"></span></a>";
-            header += "<a href=\"http://localhost:9000?sort=generalNetwork.hashrate,desc\"><span class=\"glyphicon glyphicon-chevron-down\"></span></a></td>";
-            header += "</tr>";
-
-            header +=" </tbody></table>";
-
-            $(".resultTable").append(header);
-
-            /*
-             <tr>
-             <td>Id
-             <a th:href="@{${url}(sort='id,asc',page=${number})}"><span class="glyphicon glyphicon-chevron-up"></span></a>
-             <a th:href="@{${url}(sort='id,desc',page=${number})}"><span class="glyphicon glyphicon-chevron-down"></span></a>
-             </td>
-             */
-
-        }
-
     </script>
-
 </head>
 <body>
 
@@ -120,45 +345,25 @@
     <div th:if="${not #lists.isEmpty(networks)}">
         <a th:href="@{${url}}"><h3>Turtlecoin Mining Info</h3></a>
 
-        <!--<p th:text="'totalElements ' + ${totalElements}"></p>-->
-        <!--<p th:text="'totalPages ' + ${totalPages}"></p>-->
-        <!--<p th:text="'number ' + ${number}"></p>-->
-        <!--<p th:text="'size ' + ${size}"></p>-->
-        <!--<p th:text="'isSorted ' + ${isSorted}"></p>-->
-
-        <!--<p th:text="'first: ' + ${first}"></p>-->
-        <!--<p th:text="'last: ' + ${last}"></p>-->
-
-        <!--<p th:text="'as_id: ' + ${as_id}"></p>-->
-        <!--<p th:text="'ds_id: ' + ${ds_id}"></p>-->
-
-        <!--<p th:text="'as_time: ' + ${as_time}"></p>-->
-        <!--<p th:text="'ds_time: ' + ${ds_time}"></p>-->
-
-        <!--<p th:text="'as_hashrate: ' + ${as_hashrate}"></p>-->
-        <!--<p th:text="'ds_hashrate: ' + ${ds_hashrate}"></p>-->
-
-        <!--<p th:text="'uri: ' + ${uri}"></p>-->
-        <!--<p th:text="'urii: ' + ${urii}"></p>-->
-
-
         <div class="resultTable">
-        <table class="table table-striped">
-            <tbody>
-            <tr>
-                <td>Id <a th:href="@{${url}(sort='id,asc',page=${number})}"><span class="glyphicon glyphicon-chevron-up"></span></a><a th:href="@{${url}(sort='id,desc',page=${number})}"><span class="glyphicon glyphicon-chevron-down"></span></a></td>
-                <td>Time <a th:href="@{${url}(sort='created,asc',page=${number})}"><span class="glyphicon glyphicon-chevron-up"></span></a><a th:href="@{${url}(sort='created,desc',page=${number})}"><span class="glyphicon glyphicon-chevron-down"></span></a></td>
-                <td>Hashrate <a th:href="@{${url}(sort='generalNetwork.hashrate,asc',page=${number})}"><span class="glyphicon glyphicon-chevron-up"></span></a><a th:href="@{${url}(sort='generalNetwork.hashrate,desc',page=${number})}"><span class="glyphicon glyphicon-chevron-down"></span></a></td>
-            </tr>
-            <tr th:each="net : ${networks}">
-                <td th:each="items : ${net.generalNetwork}" th:col-id="${items.id}" th:text="${items.id}"></td>
-                <td th:each="items : ${net.generalNetwork}" th:col-id="${items.id}" th:text="${net.created}"></td>
-                <td th:each="items : ${net.generalNetwork}" th:col-id="${items.id}"><a href="#my_modal" data-toggle="modal" th:data-id="${items.id}">
-                    <span th:each="items : ${net.generalNetwork}" th:text="${items.hashrate}"></span></a></td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
+            <table class="table table-striped" id="trtl">
+                <thead>
+                <tr>
+                    <th>Id <a th:href="@{${url}(sort='id,asc',page=${number})}"><span class="glyphicon glyphicon-chevron-up"></span></a><a th:href="@{${url}(sort='id,desc',page=${number})}"><span class="glyphicon glyphicon-chevron-down"></span></a></th>
+                    <th>Time <a th:href="@{${url}(sort='created,asc',page=${number})}"><span class="glyphicon glyphicon-chevron-up"></span></a><a th:href="@{${url}(sort='created,desc',page=${number})}"><span class="glyphicon glyphicon-chevron-down"></span></a></th>
+                    <th>Hashrate <a th:href="@{${url}(sort='generalNetwork.hashrate,asc',page=${number})}"><span class="glyphicon glyphicon-chevron-up"></span></a><a th:href="@{${url}(sort='generalNetwork.hashrate,desc',page=${number})}"><span class="glyphicon glyphicon-chevron-down"></span></a></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="net : ${networks}">
+                    <td th:each="items : ${net.generalNetwork}" th:col-id="${items.id}" th:text="${items.id}"></td>
+                    <td th:each="items : ${net.generalNetwork}" th:col-id="${items.id}" th:text="${net.created}"></td>
+                    <td th:each="items : ${net.generalNetwork}" th:col-id="${items.id}"><a href="#my_modal" data-toggle="modal" th:data-id="${items.id}">
+                        <span th:each="items : ${net.generalNetwork}" th:text="${items.hashrate}"></span></a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
 
         <div>
             <ul class="pagination">
@@ -167,23 +372,12 @@
                     <a th:if='${i}!=${page.number} and ${urii}==null' th:href="@{${url}(page=${i})}">
                         <span th:text='${i+1}'>1</span>
                     </a>
-                    <a th:if='${i}!=${page.number} and ${urii}!=null' th:href="@{${url}(${urii},page=${i})}">
+                    <a th:if='${i}!=${page.number} and ${urii}!=null' th:href="@{${url}(sort=${urii},page=${i})}">
                         <span th:text='${i+1}'>1</span>
                     </a>
                 </li>
             </ul>
         </div>
-
-        <!--<div>-->
-            <!--<ul class="pagination">-->
-                <!--<li th:each='i : ${#numbers.sequence(0,page.totalPages-1)}' style="display:inline">-->
-                    <!--<span th:if='${i}==${page.number}' th:text='${i+1}'>1</span>-->
-                    <!--<a th:if='${i}!=${page.number}' th:href="@{${url}(page=${i})}">-->
-                        <!--<span th:text='${i+1}'>1</span>-->
-                    <!--</a>-->
-                <!--</li>-->
-            <!--</ul>-->
-        <!--</div>-->
 
     </div>
 </div>

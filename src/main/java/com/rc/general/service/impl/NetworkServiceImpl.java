@@ -60,13 +60,25 @@ public class NetworkServiceImpl implements NetworkService {
 	@Override
 	public String parseUri(String str) {
 		String result = "";
-		if (StringUtils.isEmpty(str)){
+		String[] query, stored;
+		if (StringUtils.isEmpty(str)) {
 			return null;
 		} else {
-			String[] query = str.split("&page");
-			result = query[0];
-			result = result.replace("%3D", "=");
-
+			if (str.contains("&page")){
+				query = str.split("&page");
+				result = query[0];
+			}
+			if (str.contains("?page")) {
+				query = str.split("\\?page");
+				result = query[0];
+			}
+			if (result.contains("sort=")){
+				stored = result.split("sort=");
+				result = stored[1];
+			}
+			if (StringUtils.isEmpty(result)) {
+				return null;
+			}
 			return result;
 		}
 	}
