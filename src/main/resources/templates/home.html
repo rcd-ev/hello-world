@@ -7,336 +7,8 @@
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.js"></script>
     <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-    <script type="text/javascript">
-        var network = "";
-        var rate = 10000;
-        var tab = new Array();
-        var temp = new Array();
-        var tempA = new Array();
-        var vx = new Array();
-        var rows = new Array();
-        var old = new Array();
-        var tempo = new Array();
-        var match = new Array();
-        var matchA = new Array();
-        var finalA = new Array();
-        var rowCount = $("#trtl  td").closest("tr").length;
-        var max = 1;
-        var maxUpdate = 1;
-        var jsonCount = 0;
-        var jsonjs;
-    </script>
-    <script type="text/javascript">
-        $(window).load(function(){
-            $('#my_modal').on('show.bs.modal', function(e) {
-                var netId = $(e.relatedTarget).data('id');
-                $(e.currentTarget).find('input[name="netId"]').val(netId);
-                network = netId;
-                showData(netId);
-            });
-        });
-    </script>
-
-    <script type="text/javascript">
-        $(window).load(function(){
-            $('#my_modal').on('show.bs.modal', function(e) {
-                var netId = $(e.relatedTarget).data('id');
-                $(e.currentTarget).find('input[name="netId"]').val(netId);
-                network = netId;
-                showData(netId);
-            });
-        });
-    </script>
-
-    <script type="text/javascript">
-        $(document).ready(function () {
-            function poolData() {
-                $.ajax({
-                    url: '/api/record',
-                    type: "get",
-                    dataType: "json",
-                    success: function (response) {
-                        //new data from pg endpoint
-                        var tmp = "";
-                        var dt = JSON.stringify(response);
-                        jsonjs = JSON.parse(dt);
-
-                        for (i = 0; i < rowCount; i++) {
-                            tab[i] = new Array(i);
-                            for (j = 0; j < rows[i].length; j++) {
-                                if (j == 0) {
-                                    tab[i][j] = jsonjs.content[i].generalNetwork.id;
-                                }
-                                if (j == 1) {
-                                    tab[i][j] = jsonjs.content[i].created;
-                                }
-                                if (j == 2) {
-                                    tab[i][j] = jsonjs.content[i].generalNetwork.hashrate;
-                                }
-                            }
-                        }
-                    }
-                });
-
-/////////////////////////////////////////////////////////////
-  /*
-                var headers = "";
-                $("#trtl").empty();
-                headers += "<thead>";
-                headers += "<tr>";
-                headers += "<th>Id <a href=\"?sort=id,asc\"><span class=\"glyphicon glyphicon-chevron-up\"></span></a><a href=\"?sort=id,desc\"><span class=\"glyphicon glyphicon-chevron-down\"></span></a></th>";
-                headers += "<th>Time <a href=\"?sort=created,asc\"><span class=\"glyphicon glyphicon-chevron-up\"></span></a><a href=\"?sort=created,desc\"><span class=\"glyphicon glyphicon-chevron-down\"></span></a></th>";
-                headers += "<th>Hashrate <a href=\"?sort=generalNetwork.hashrate,asc\"><span class=\"glyphicon glyphicon-chevron-up\"></span></a><a href=\"?sort=generalNetwork.hashrate,desc\"><span class=\"glyphicon glyphicon-chevron-down\"></span></a></th>";
-                headers += "</tr></thead><tbody>";
-
-                for(i=1; i<$(finalA).length + 1; i++) {
-                    headers += "<tr>";
-                    var idd;
-                    for(j=0; j<$(finalA[i]).length; j++) {
-                        if(j==0 && i!=0){
-                            idd = $(finalA[i][j]).text();
-                            headers += "<td col-id=\"" + $(finalA[i][i]).text() + "\">" + $(finalA[i][j]).text() + "</td>";
-                        }
-                        if(j==1 && i!=0){
-                            headers += "<td col-id=\"" + idd + "\">" + $(finalA[i][j]).text() + "</td>";
-                        }
-                        if(j==2 && i!=0){
-                            //headers += "<td></td>";
-                            headers += "<td col-id=\"" + idd + "\">" +
-                                "<a href=\"#my_modal\" data-toggle=\"modal\" data-id=" + idd + ">" +
-                                "<span>" + $(finalA[i][j]).text() + "</span></a>"+"</td>";
-                        }
-                    }
-                    headers += "</tr>";
-                }
-                headers += "</tbody>";
-                $("#trtl").append(headers);
-
-*/
-/////////////////////////////////////////////////////////////
-
-                //render
-/*                var headers = "";
-                $("#trtl").empty();
-                headers += "<thead>";
-                headers += "<tr>";
-                headers += "<th>Id <a href=\"?sort=id,asc\"><span class=\"glyphicon glyphicon-chevron-up\"></span></a><a href=\"?sort=id,desc\"><span class=\"glyphicon glyphicon-chevron-down\"></span></a></th>";
-                headers += "<th>Time <a href=\"?sort=created,asc\"><span class=\"glyphicon glyphicon-chevron-up\"></span></a><a href=\"?sort=created,desc\"><span class=\"glyphicon glyphicon-chevron-down\"></span></a></th>";
-                headers += "<th>Hashrate <a href=\"?sort=generalNetwork.hashrate,asc\"><span class=\"glyphicon glyphicon-chevron-up\"></span></a><a href=\"?sort=generalNetwork.hashrate,desc\"><span class=\"glyphicon glyphicon-chevron-down\"></span></a></th>";
-                headers += "</tr></thead><tbody>";
-
-                for(i=1;i<$(old).length + 1;i++) {
-                    headers += "<tr>";
-                    var idd;
-                    for(j=0; j<$(old[i]).length; j++) {
-                        if(j==0 && i!=0){
-                            idd = $(old[i][j]).text();
-                            headers += "<td col-id=\"" + $(old[i][i]).text() + "\">" + $(old[i][j]).text() + "</td>";
-                        }
-                        if(j==1 && i!=0){
-                            headers += "<td col-id=\"" + idd + "\">" + $(old[i][j]).text() + "</td>";
-                        }
-                        if(j==2 && i!=0){
-                            headers += "<td col-id=\"" + idd + "\">" +
-                                "<a href=\"#my_modal\" data-toggle=\"modal\" data-id=" + idd + ">" +
-                                "<span>" + $(old[i][j]).text() + "</span></a>"+"</td>";
-                        }
-                    }
-                    headers += "</tr>";
-                }
-                headers += "</tbody>";
-                $("#trtl").append(headers);
-                */
-
-//--------------------------------------------------------------------------------
-
-                updateTbl();
-                renderTbl();
-            }
-            setInterval(function() {poolData();}, rate);
-        });
-
-        function updateTbl() {
-//            console.log(tab);
-            //update
-            rowCount = $("#trtl  td").closest("tr").length;
-            //get old html content
-            for(i=0;i<rowCount+1;i++) {
-                rows[i]=document.getElementById("trtl").rows[i].cells;
-                old[i] = new Array(i);
-                for(j=0; j<rows[i].length; j++) {
-                    rows[i][j]=$(rows[i][j]).text();
-                    rows[i][j]=$(rows[i][j]).children('td').text();
-
-                    var v = rows[i][j];
-                    if(i==0){
-                        old[i][j] = rows[i][j];
-                    }
-                    if(j==0 && i!=0){
-                        if($(v).text()>max){
-                            max=$(v).text();
-                        }
-                        old[i][j] = $(v).text();
-                    }
-
-                    old[i][j] = rows[i][j];
-                    //var www = old[i][j];
-                    //console.log($(old[i][j]).text());
-                }
-            }
-
-            for(i=0;i<rowCount+1;i++) {
-                temp[i] = new Array(i);
-                //  for (j = 0, k=1; j < rows[i].length; j++,k++) {
-                for (j = 0; j < rows[i].length; j++) {
-                    temp[i][j] = old[i][j];
-                    //console.log($(temp[i][j]).text());
-                    //tempA[i] = temp[k][j];
-                }
-            }
-
-//               temp -> stara tablica
-//               tab  -> nowa  tablica
-//               key, tempA  -> połaczana
-
-            for(i=0;i<rowCount+1;i++) {
-                tempA[i] = new Array(i);
-                for (j = 0; j < rows[i].length; j++) {
-                    tempA[i][j] = $(temp[i][j]);
-                }
-            }
-
-//            console.log("TEMPA: ");
-//            console.log(tempA);
-//            console.log("TAB: ");
-//            console.log(tab);
-
-            for(i=0; i<rowCount; i++) {
-                vx[i] = new Array(i);
-                for (j = 0; j < rows[i].length; j++) {
-
-
-
-                    //tempA[i][j] = temp[i][j];
-//                        if( tab[i][0].text()> tempA[i][0].text()){
-//                            tempA[i][j] = tab[i][j];
-//                            jsonCount++
-//                        }
-//                        if(tab.indexOf(max) !== -1) {
-//                        }
-                    //vx[i][j] = tab[i][0];
-//                        if (j == 0) {
-//                                if($(vx)>max){
-//                                    tempA[i][j] = tab[i][j];
-                    //tempA.unshift(tab[i][j]);
-                    //jsonCount++;
-//                                }
-//                            }
-//                        key =
-                    //key.push()
-                    // console.log($(temp[i][j]).text());
-
-                }
-            }
-
-            // console.log("jsc: " + jsonCount);
-            // console.log(tempA);
-
-            for(i=0;i<rowCount;i++) {
-                matchA[i] = new Array(i);
-                for (j = 0; j < rows[i].length; j++) {
-
-                    // matchA[i][j] =
-                    //temp.shift();
-                    //console.log(temp);
-                    // matchA[i][j] = temp[i][j];
-                }
-            }
-//                for(i=0;i<rowCount;i++) {
-//                    matchA[i] = new Array(i);
-//                    for (j = 0; j < rows[i].length; j++) {
-//                        matchA[i][j] = old.
-//                    }
-//                }
-
-//                for(i=0;i<rowCount+1;i++) {
-//                    match[i] = new Array(i);
-//                    for (j = 0; j < rows[i].length; j++) {
-//                        match[i][j] = old[i][j];
-//                        if (match.indexOf('432') !== -1) {
-//                            console.log('index ' + match.indexOf('432'));
-//                        }
-//                        console.log('index ' + match.indexOf('432'));
-//                    }
-//                }
-
-            //match contents
-            for(i=0;i<rowCount+1;i++) {
-                finalA[i] = new Array(i);
-                for(j=0; j<rows[i].length; j++) {
-                    finalA[i][j] = tempA[i][j];
-                }
-            }
-
-            console.log("FINAL-A: ");
-            console.log(finalA);
-
-//            finalA.unshift(tab.splice(2, 1));
-
-            finalA.shift();
-            finalA.unshift($(tab[0]));
-            finalA.unshift($(tab[1]));
-            finalA.unshift($(tab[2]));
-            finalA.unshift($(tab[3]));
-            finalA.unshift($(tab[4]));
-
-            finalA.pop();
-            finalA.pop();
-            finalA.pop();
-            finalA.pop();
-            finalA.pop();
-
-//               finalA.unshift(old[0]); //dodanie nagłówka
-//                finalA.unshift(old[0]); //dodanie nagłówka
-//                finalA.pop(); //usunięcie ostatniego wiersza
-//              console.log(finalA); //na końcu zamienić $old na $finalA
-
-        }
-
-        function renderTbl() {
-            var headers = "";
-            $("#trtl").empty();
-            headers += "<thead>";
-            headers += "<tr>";
-            headers += "<th>Id <a href=\"?sort=id,asc\"><span class=\"glyphicon glyphicon-chevron-up\"></span></a><a href=\"?sort=id,desc\"><span class=\"glyphicon glyphicon-chevron-down\"></span></a></th>";
-            headers += "<th>Time <a href=\"?sort=created,asc\"><span class=\"glyphicon glyphicon-chevron-up\"></span></a><a href=\"?sort=created,desc\"><span class=\"glyphicon glyphicon-chevron-down\"></span></a></th>";
-            headers += "<th>Hashrate <a href=\"?sort=generalNetwork.hashrate,asc\"><span class=\"glyphicon glyphicon-chevron-up\"></span></a><a href=\"?sort=generalNetwork.hashrate,desc\"><span class=\"glyphicon glyphicon-chevron-down\"></span></a></th>";
-            headers += "</tr></thead><tbody>";
-
-            for(i=1; i<$(finalA).length + 1; i++) {
-                headers += "<tr>";
-                var idd;
-                for(j=0; j<$(finalA[i]).length; j++) {
-                    if(j==0 && i!=0){
-                        console.log("id :"+ $(finalA[i][j]).text());
-                        idd = $(finalA[i][j]).text();
-                        headers += "<td col-id=\"" + $(finalA[i][i]).text() + "\">" + $(finalA[i][j]).text() + "</td>";
-                    }
-                    if(j==1 && i!=0){
-                        headers += "<td col-id=\"" + idd + "\">" + $(finalA[i][j]).text() + "</td>";
-                    }
-                    if(j==2 && i!=0){
-                        headers += "<td col-id=\"" + idd + "\">" +
-                            "<a href=\"#my_modal\" data-toggle=\"modal\" data-id=" + idd + ">" +
-                            "<span>" + $(finalA[i][j]).text() + "</span></a>"+"</td>";
-                    }
-
-                }
-                headers += "</tr>";
-            }
-            headers += "</tbody>";
-            $("#trtl").append(headers);
-        }
+    <script th:inline="javascript">
+        var nr = [[${number}]];
     </script>
 </head>
 <body>
@@ -422,5 +94,57 @@
     </div>
 </div>
 
+<script type="text/javascript">
+    var network = "";
+    var rate = 20000;
+    var tab = new Array();
+    var rows = new Array();
+    var rowCount = $("#trtl  td").closest("tr").length;
+    var jsonjs;
+    var $table = $('.resultTable table');
+
+    $(window).load(function(){
+        $('#my_modal').on('show.bs.modal', function(e) {
+            var netId = $(e.relatedTarget).data('id');
+            $(e.currentTarget).find('input[name="netId"]').val(netId);
+            network = netId;
+            showData(netId);
+        });
+    });
+
+    $(window).load(function(){
+        $('#my_modal').on('show.bs.modal', function(e) {
+            var netId = $(e.relatedTarget).data('id');
+            $(e.currentTarget).find('input[name="netId"]').val(netId);
+            network = netId;
+            showData(netId);
+        });
+    });
+
+    $(document).ready(function () {
+        function poolData() {
+            $.ajax({
+                url: '/api/record?p=' + nr,
+                type: "get",
+                dataType: "json",
+                success: function (response) {
+                    var tmp = "";
+                    var dt = JSON.stringify(response);
+                    jsonjs = JSON.parse(dt);
+                    reloadTable(jsonjs.content);
+                }
+            });
+        }
+        function reloadTable(data) {
+            $table.find('tbody').html('');
+            var tbody = '';
+            data.forEach(function(item){
+                tbody += '<tr><td col-id="'  + item.id + '">'  + item.id + '</td><td col-id="'  + item.id + '">'  + item.created + '</td><td col-id="'  + item.id + '"><a href="#my_modal" data-toggle="modal" data-id="'  + item.id + '"><span>'  + item.generalNetwork.hashrate + '</span></a></td></tr>';
+            });
+            $table.find('tbody').html(tbody);
+        }
+        setInterval(function() {poolData();}, rate);
+    });
+</script>
 </body>
 </html>

@@ -51,8 +51,8 @@ public class GlobalInfoRestController {
 
 	@GetMapping
 	@RequestMapping(value = "/api/record", method = RequestMethod.GET)
-	public Page<TrtlNetwork> lastNetworkList() {
-		Pageable pageable = new PageRequest(0, pageSize, Sort.Direction.DESC,"id");
+	public Page<TrtlNetwork> lastNetworkList(@RequestParam("p") int page) {
+		Pageable pageable = new PageRequest(page, pageSize, Sort.Direction.DESC,"id");
 		Page<TrtlNetwork> bottomPage = networkService.findAllNetworksByPage(pageable);
 		return bottomPage;
 	}

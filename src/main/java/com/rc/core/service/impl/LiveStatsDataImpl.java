@@ -113,21 +113,21 @@ public class LiveStatsDataImpl implements LiveStatsData {
 		String atpool = apiDataService.takeGet(atpoolURL);
 		String mine2g = apiDataService.takeGet(mine2gURL);
 		String tninja = apiDataService.takeGet(tninjaURL);
-		String zpool = apiDataService.takeGet(zpoolURL);
+		//String zpool = apiDataService.takeGet(zpoolURL);
 		String hkts = apiDataService.takeGet(hktsURL);
 		String usts = apiDataService.takeGet(ustsURL);
 		String nymine = apiDataService.takeGet(nymineURL);
-		String inpool = apiDataService.takeGet(inpoolURL);
+		//String inpool = apiDataService.takeGet(inpoolURL);
 
 		TrtlData eutsData = fromJson(euts);
 		TrtlData atpoolData = fromJson(atpool);
 		TrtlData mine2gData = fromJson(mine2g);
 		TrtlData tninjaData = fromJson(tninja);
-		TrtlData zpoolData = fromJson(zpool);
+		//TrtlData zpoolData = fromJson(zpool);
 		TrtlData hktsData = fromJson(hkts);
 		TrtlData ustsData = fromJson(usts);
 		TrtlData nymineData = fromJson(nymine);
-		TrtlData inpoolData = fromJson(inpool);
+		//TrtlData inpoolData = fromJson(inpool);
 
 		TrtlGeneral general = fillGeneralData(eutsData, genHash);
 
@@ -141,16 +141,16 @@ public class LiveStatsDataImpl implements LiveStatsData {
 		pools.add(pool3);
 		TrtlPool pool4 = fillPoolData(tninjaData, network, TrtlPoolRegion.TNINJA);
 		pools.add(pool4);
-		TrtlPool pool5 = fillPoolData(zpoolData, network, TrtlPoolRegion.ZPOOL);
-		pools.add(pool5);
+		//TrtlPool pool5 = fillPoolData(zpoolData, network, TrtlPoolRegion.ZPOOL);
+		//pools.add(pool5);
 		TrtlPool pool6 = fillPoolData(hktsData, network, TrtlPoolRegion.HKTS);
 		pools.add(pool6);
 		TrtlPool pool7 = fillPoolData(ustsData, network, TrtlPoolRegion.USTS);
 		pools.add(pool7);
 		TrtlPool pool8 = fillPoolData(nymineData, network, TrtlPoolRegion.NYMINE);
 		pools.add(pool8);
-		TrtlPool pool9 = fillPoolData(inpoolData, network, TrtlPoolRegion.INPOOL);
-		pools.add(pool9);
+		//TrtlPool pool9 = fillPoolData(inpoolData, network, TrtlPoolRegion.INPOOL);
+		//pools.add(pool9);
 
 		LocalDateTime now = LocalDateTime.now();
 
