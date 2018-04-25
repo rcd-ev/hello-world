@@ -25,6 +25,9 @@ public class LiveStatsDataImpl implements LiveStatsData {
 	@Value("${configs.pools.hashrateURL}")
 	private String hashrateURL;
 
+	@Value("${configs.pools.heightURL}")
+	private String heightURL;
+
 	@Value("${configs.pools.eutsURL}")
 	private String eutsURL;
 
@@ -107,6 +110,8 @@ public class LiveStatsDataImpl implements LiveStatsData {
 
 		TrtlNetwork network = new TrtlNetwork();
 
+
+
 		//	fetch data from endpoints
 		String genHash = apiDataService.takeGet(hashrateURL);
 		String euts = apiDataService.takeGet(eutsURL);
@@ -128,10 +133,17 @@ public class LiveStatsDataImpl implements LiveStatsData {
 		TrtlData ustsData = fromJson(usts);
 		TrtlData nymineData = fromJson(nymine);
 		//TrtlData inpoolData = fromJson(inpool);
-
 		TrtlGeneral general = fillGeneralData(eutsData, genHash);
 
+
+
+		int count=0;
+
 		List<TrtlPool> pools = new ArrayList<>();
+
+		for (int i = 0; i < count +1 ; i++) {
+
+		}
 
 		TrtlPool pool1 = fillPoolData(eutsData, network, TrtlPoolRegion.EUTS);
 		pools.add(pool1);
@@ -149,6 +161,7 @@ public class LiveStatsDataImpl implements LiveStatsData {
 		pools.add(pool7);
 		TrtlPool pool8 = fillPoolData(nymineData, network, TrtlPoolRegion.NYMINE);
 		pools.add(pool8);
+
 		//TrtlPool pool9 = fillPoolData(inpoolData, network, TrtlPoolRegion.INPOOL);
 		//pools.add(pool9);
 

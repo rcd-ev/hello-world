@@ -18,10 +18,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-
+/*
 @RestController
-@RequiredArgsConstructor
+@RequiredArgsConstructor*/
 public class GlobalInfoRestController {
+/*
 	private final GeneralService api;
 	private final NetworkService networkService;
 
@@ -32,14 +33,15 @@ public class GlobalInfoRestController {
 	String generalHashrate() {
 		return api.takeHashrate();
 	}
+*/
 
-	@RequestMapping("/api/network")
-	public TrtlNetwork findNetworkById(@RequestParam("id") long id){
-		TrtlNetwork networks = networkService.getNetworkById(id);
-		return networks;
-	}
+//	@RequestMapping("/api/network")
+//	public TrtlNetwork findNetworkById(@RequestParam("id") long id){
+//		TrtlNetwork networks = networkService.getNetworkById(id);
+//		return networks;
+//	}
 
-	@GetMapping
+/*	@GetMapping
 	@RequestMapping(value = "/list", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<List<TrtlNetwork>> listAllNetwork() {
 		List<TrtlNetwork> networks = networkService.findAllNetworks();
@@ -55,6 +57,6 @@ public class GlobalInfoRestController {
 		Pageable pageable = new PageRequest(page, pageSize, Sort.Direction.DESC,"id");
 		Page<TrtlNetwork> bottomPage = networkService.findAllNetworksByPage(pageable);
 		return bottomPage;
-	}
+	}*/
 
 }

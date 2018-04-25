@@ -27,6 +27,7 @@ configs:
     page: 20
   pools:
     hashrateURL: https://turtle-coin.com/q/hashrate/
+    heightURL: https://turtle-coin.com/q/height/
     eutsURL: http://eu.turtlepool.space/api/live_stats
     atpoolURL: http://turtle-eu.atpool.party:8117/stats
     mine2gURL: https://trtl.mine2gether.com/api/stats

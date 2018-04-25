@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <script th:inline="javascript">
         var nr = [[${number}]];
+        var snr = [[${sort}]];
     </script>
 </head>
 <body>
@@ -16,6 +17,9 @@
 <div class="container">
     <div th:if="${not #lists.isEmpty(networks)}">
         <a th:href="@{${url}}"><h3>Turtlecoin Mining Info</h3></a>
+
+        <p th:text="'sort ' + ${sort}"></p>
+        <p th:text="'number ' + ${number}"></p>
 
         <div class="resultTable">
             <table class="table table-striped" id="trtl">
@@ -96,7 +100,7 @@
 
 <script type="text/javascript">
     var network = "";
-    var rate = 20000;
+    var rate = 10000;
     var tab = new Array();
     var rows = new Array();
     var rowCount = $("#trtl  td").closest("tr").length;
@@ -124,14 +128,16 @@
     $(document).ready(function () {
         function poolData() {
             $.ajax({
-                url: '/api/record?p=' + nr,
+                url: '/api/network/record?p=' + nr,
                 type: "get",
                 dataType: "json",
                 success: function (response) {
                     var tmp = "";
                     var dt = JSON.stringify(response);
                     jsonjs = JSON.parse(dt);
-                    reloadTable(jsonjs.content);
+                    if (snr == null || snr == desc) {
+                        reloadTable(jsonjs.content);
+                    }
                 }
             });
         }

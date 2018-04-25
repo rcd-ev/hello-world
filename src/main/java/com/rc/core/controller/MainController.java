@@ -41,63 +41,16 @@ public class MainController {
 	@RequestMapping("/")
 	public String mainPage(@SortDefault.SortDefaults({@SortDefault(sort = "id", direction = Sort.Direction.DESC)})
 	@PageableDefault(size = 20) Pageable pageable, Model model, HttpServletRequest request) {
-		Object query = request.getAttribute("javax.servlet.forward.query_string");
-
 		Page<TrtlNetwork> pages = networkService.findAllNetworksByPage(pageable);
 
 		model.addAttribute("networks", pages.getContent());
 		model.addAttribute("page", pages);
 		model.addAttribute("url", "/");
-		model.addAttribute("first", pages.isFirst());
-		model.addAttribute("last", pages.isLast());
 		model.addAttribute("totalPages", pages.getTotalPages());
 		model.addAttribute("number", pages.getNumber());
-		model.addAttribute("totalElements", pages.getTotalElements());
-		model.addAttribute("size", pages.getSize());
-		model.addAttribute("asc", pages.getSort().ascending());
-		model.addAttribute("desc", pages.getSort().descending());
-		model.addAttribute("isSorted", pages.getSort().isSorted());
-		model.addAttribute("as_id", pages.getSort().ascending().getOrderFor("id"));
-		model.addAttribute("ds_id", pages.getSort().descending().getOrderFor("id"));
-		model.addAttribute("as_time", pages.getSort().ascending().getOrderFor("created"));
-		model.addAttribute("ds_time", pages.getSort().descending().getOrderFor("created"));
-		model.addAttribute("as_hashrate", pages.getSort().ascending().getOrderFor("generalNetwork.hashrate"));
-		model.addAttribute("ds_hashrate", pages.getSort().descending().getOrderFor("generalNetwork.hashrate"));
+		model.addAttribute("sort", null);
 		model.addAttribute("uri", request.getQueryString());
 		model.addAttribute("urii", networkService.parseUri(request.getQueryString()));
-
-		return "home";
-	}
-
-	@GetMapping
-	@RequestMapping("/test")
-	public String mainP(@SortDefault.SortDefaults({@SortDefault(sort = "id", direction = Sort.Direction.DESC)})
-	@PageableDefault(size = 20)Pageable pageable, Model model) {
-
-
-		Page<TrtlNetwork> pages = networkService.findAllNetworksByPage(pageable);
-
-
-		model.addAttribute("url", "/test");
-		model.addAttribute("networks", pages.getContent());
-		model.addAttribute("page", pages);
-		model.addAttribute("first", pages.isFirst());
-		model.addAttribute("last", pages.isLast());
-		model.addAttribute("totalPages", pages.getTotalPages());
-		model.addAttribute("number", pages.getNumber());
-		model.addAttribute("totalElements", pages.getTotalElements());
-		model.addAttribute("size", pages.getSize());
-		model.addAttribute("asc", pages.getSort().ascending());
-		model.addAttribute("desc", pages.getSort().descending());
-
-
-		model.addAttribute("isSorted", pages.getSort().isSorted());
-		model.addAttribute("as_id", pages.getSort().ascending().getOrderFor("id"));
-		model.addAttribute("ds_id", pages.getSort().descending().getOrderFor("id"));
-		model.addAttribute("as_time", pages.getSort().ascending().getOrderFor("created"));
-		model.addAttribute("ds_time", pages.getSort().descending().getOrderFor("created"));
-		model.addAttribute("as_hashrate", pages.getSort().ascending().getOrderFor("generalNetwork.hashrate"));
-		model.addAttribute("ds_hashrate", pages.getSort().descending().getOrderFor("generalNetwork.hashrate"));
 
 		return "home";
 	}
