@@ -1,88 +1,155 @@
 package com.rc.core.service.impl;
 
-import com.rc.core.service.LiveStatsData;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.async.Callback;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import com.rc.core.service.LiveStatsService;
 import com.rc.general.domain.NetworkSnapshot;
-import com.rc.general.service.NetworkService;
-import com.rc.general.service.NetworksService;
+import com.rc.general.service.NetworkSnapshotService;
 import com.rc.pool.domain.PoolData;
 import com.rc.pool.domain.PoolHashrate;
 import com.rc.pool.service.PoolDataService;
 import com.rc.pool.service.PoolHashrateService;
-import lombok.RequiredArgsConstructor;
+
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLContexts;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.impl.nio.client.HttpAsyncClients;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Future;
+
+import javax.net.ssl.SSLContext;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class LiveStatsServiceImpl implements LiveStatsService {
-	private final NetworkService networkService;
-	private final LiveStatsData liveStatsData;
-	private final PoolDataService poolService;
-	private final NetworksService networkTrtlService;
-	private final PoolHashrateService poolsTrtlService;
-	private final PoolDataService poolTrtlService;
 
+	private final NetworkSnapshotService networkSnapshotService;
+	private final PoolDataService poolDataService;
+	private final PoolHashrateService poolHashrateService;
+
+	@Value("${configs.pools.hashrateURL}")
+	private String hashrateURL;
+
+	@Value("${configs.timezone.zone}")
+	private String zone;
 
 	@Override
-	public void saveInformation() {
-//		TrtlNetwork network = liveStatsData.fill();
-
-//		test();
-//		networkService.create(network);
+	public void saveData() {
+		dataProcessing();
 	}
 
-	private void test() {
-		LocalDateTime now = LocalDateTime.now();
-		NetworkSnapshot networkTrtl = new NetworkSnapshot();
-		List<PoolHashrate> pools = new ArrayList<>();
+	@Override
+	public void dataProcessing() {
+		List<PoolData> active = poolDataService.listActivePool();
 
-		PoolData pp = new PoolData();
-		pp.setName("fc");
-		pp.setUrl("ss");
-		pp.setEnable(true);
-		//pp.setPools(pools);
-		//poolTrtlService.create(pp);
+		NetworkSnapshot snapshot = new NetworkSnapshot();
+		List<PoolHashrate> poolHashrates = new ArrayList<>();
 
+		for (int i=0; i<active.size()+1;i++)
+			callPool(active.get(i), poolHashrates, snapshot);
 
-		PoolData p1 = poolService.getByName("eu.turtlepool.space");
+		snapshot.setPools(poolHashrates);
+		callNetwork(snapshot);
 
+		networkSnapshotService.create(snapshot);
+	}
 
-		PoolHashrate op = new PoolHashrate();
-		op.setHashrate(2.1);
-		op.setPoolData(p1);
-		op.setNetwork(networkTrtl);
-		//poolsTrtlService.create(op);
+	@Override
+	public void callPool(PoolData active, List<PoolHashrate> poolHashrates, NetworkSnapshot snapshot) {
+		SSLContext sslcontext = null;
+		try {
+			sslcontext = SSLContexts.custom()
+					.loadTrustMaterial(null, new TrustSelfSignedStrategy())
+					.build();
+		} catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException e) {
+			e.printStackTrace();
+		}
 
-		PoolHashrate op1 = new PoolHashrate();
-		op1.setHashrate(3.1);
-		op1.setPoolData(pp);
-		op1.setNetwork(networkTrtl);
+		SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext,
+				SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+		CloseableHttpAsyncClient httpclient = HttpAsyncClients.custom().setSSLContext(sslcontext)
+				.build();
+		Unirest.setAsyncHttpClient(httpclient);
 
-//		poolsTrtlService.create(op1);
+		Future<HttpResponse<JsonNode>> future = Unirest.get(active.getUrl())
+				.header("accept", "application/json")
+				.asJsonAsync(new Callback<JsonNode>() {
 
-//		pools.add(op);
+					public void failed(UnirestException e) {
+						e.printStackTrace();
+					}
 
-//		List<PoolsTrtl> pools = new ArrayList<>();
-		pools.add(op);
-		pools.add(op1);
+					public void completed(HttpResponse<JsonNode> response) {
+						JsonNode body = response.getBody();
+						PoolHashrate pool = new PoolHashrate();
+						pool.setPoolData(active);
+						pool.setCreated(new Timestamp(ZonedDateTime.of(LocalDateTime.now(), ZoneId.of(zone)).toInstant().toEpochMilli()));
+						pool.setHashrate(body.getObject().getJSONObject("pool").getDouble("hashrate"));
+						pool.setNetwork(snapshot);
+						poolHashrates.add(pool);
 
+					}
 
-//		List<PoolsTrtl> poolss = new ArrayList<>();
+					public void cancelled() {
 
+					}
 
-//		networkTrtl.setDifficulty(1.2);
-//		networkTrtl.setHeight(3.0);
-		networkTrtl.setCreated(new Timestamp(ZonedDateTime.of(now, ZoneId.of("Europe/Warsaw")).toInstant().toEpochMilli()));
-		networkTrtl.setPools(pools);
-		networkTrtlService.create(networkTrtl);
+				});
+	}
 
+	@Override
+	public void callNetwork(NetworkSnapshot snapshot) {
+		SSLContext sslcontext = null;
+		try {
+			sslcontext = SSLContexts.custom()
+					.loadTrustMaterial(null, new TrustSelfSignedStrategy())
+					.build();
+		} catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException e) {
+			e.printStackTrace();
+		}
+
+		SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext,
+				SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+		CloseableHttpAsyncClient httpclient = HttpAsyncClients.custom().setSSLContext(sslcontext)
+				.build();
+		Unirest.setAsyncHttpClient(httpclient);
+
+		Future<HttpResponse<JsonNode>> future = Unirest.get(hashrateURL)
+				.header("accept", "application/json")
+				.asJsonAsync(new Callback<JsonNode>() {
+
+					public void failed(UnirestException e) {
+						e.printStackTrace();
+					}
+
+					public void completed(HttpResponse<JsonNode> response) {
+						JsonNode body = response.getBody();
+						snapshot.setCreated(new Timestamp(ZonedDateTime.of(LocalDateTime.now(), ZoneId.of(zone)).toInstant().toEpochMilli()));
+						snapshot.setHashrate(Double.parseDouble(body.toString()));
+					}
+
+					public void cancelled() {
+
+					}
+
+				});
 	}
 
 }

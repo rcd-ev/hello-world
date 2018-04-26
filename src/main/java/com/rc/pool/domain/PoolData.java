@@ -1,9 +1,7 @@
 package com.rc.pool.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.Setter;
+
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -21,6 +19,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Getter
 @Setter
 @Entity
@@ -29,8 +30,8 @@ import javax.persistence.Table;
 public class PoolData {
 
 	@Id
-	@GeneratedValue(generator = "spool")
-	@SequenceGenerator(name = "spool", sequenceName = "spool", allocationSize = 1)
+	@GeneratedValue(generator = "s_pool_data")
+	@SequenceGenerator(name = "s_pool_data", sequenceName = "s_pool_data", allocationSize = 1)
 	@Column(name = "id", nullable = false)
 	private Long id;
 
@@ -41,7 +42,7 @@ public class PoolData {
 	private String url;
 
 	@Column(name = "enable", nullable = false)
-	private boolean enable;
+	private Boolean enable;
 
 	@Column(name = "created", nullable = false)
 	private Timestamp created;

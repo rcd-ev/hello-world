@@ -7,6 +7,11 @@ spring:
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
 
   datasource:
     driver-class: org.postgresql.Driver
@@ -23,17 +28,19 @@ spring:
 configs:
   scheduler:
     rate: 5000
+  timezone:
+    zone: Europe/Warsaw
   pagination:
     page: 20
   pools:
     hashrateURL: https://turtle-coin.com/q/hashrate/
     heightURL: https://turtle-coin.com/q/height/
-    eutsURL: http://eu.turtlepool.space/api/live_stats
-    atpoolURL: http://turtle-eu.atpool.party:8117/stats
-    mine2gURL: https://trtl.mine2gether.com/api/stats
-    tninjaURL: https://trtl.ninja/api/stats
-    zpoolURL: https://z-pool.com/api/stats
-    hktsURL: http://hk.turtlepool.space/api/stats
-    ustsURL: http://us.turtlepool.space/api/stats
-    nymineURL: http://ny.minetrtl.us:8117/stats
-    inpoolURL: https://auspool.turtleco.in/api/stats
+#    eutsURL: http://eu.turtlepool.space/api/live_stats
+#    atpoolURL: http://turtle-eu.atpool.party:8117/stats
+#    mine2gURL: https://trtl.mine2gether.com/api/stats
+#    tninjaURL: https://trtl.ninja/api/stats
+#    zpoolURL: https://z-pool.com/api/stats
+#    hktsURL: http://hk.turtlepool.space/api/stats
+#    ustsURL: http://us.turtlepool.space/api/stats
+#    nymineURL: http://ny.minetrtl.us:8117/stats
+#    inpoolURL: https://auspool.turtleco.in/api/stats

@@ -15,7 +15,7 @@ public class Pool {
 	String totalPayments;
 	String totalMinersPaid;
 	String miners;
-	String hashrate;
+	double hashrate;
 	String roundHashes;
 	String lastBlockFound;
 }

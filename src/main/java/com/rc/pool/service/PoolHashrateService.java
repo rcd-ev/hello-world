@@ -1,6 +1,7 @@
 package com.rc.pool.service;
 
 import com.rc.pool.domain.PoolHashrate;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

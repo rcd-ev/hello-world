@@ -13,8 +13,4 @@ public class Network {
 	String timestamp;
 	String reward;
 	String hash;
-	//  Long difficulty;
-	//	Long height;
-	//	Long timestamp;
-	//	Long reward;
 }

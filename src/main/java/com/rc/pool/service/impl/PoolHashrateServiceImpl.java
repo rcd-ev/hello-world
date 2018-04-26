@@ -3,12 +3,14 @@ package com.rc.pool.service.impl;
 import com.rc.pool.dao.PoolHashrateDao;
 import com.rc.pool.domain.PoolHashrate;
 import com.rc.pool.service.PoolHashrateService;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -29,4 +31,5 @@ public class PoolHashrateServiceImpl implements PoolHashrateService {
 	public Page<PoolHashrate> listAllByPage(Pageable pageable) {
 		return poolDao.findAll(pageable);
 	}
+
 }

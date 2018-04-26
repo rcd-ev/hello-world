@@ -3,12 +3,9 @@ package com.rc.pool.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.rc.general.domain.NetworkSnapshot;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.sql.Timestamp;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,6 +16,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Getter
 @Setter
 @Entity
@@ -27,8 +27,8 @@ import javax.persistence.Table;
 public class PoolHashrate {
 
 	@Id
-	@GeneratedValue(generator = "spools")
-	@SequenceGenerator(name = "spools", sequenceName = "spools", allocationSize = 1)
+	@GeneratedValue(generator = "s_pool_hashrate")
+	@SequenceGenerator(name = "s_pool_hashrate", sequenceName = "s_pool_hashrate", allocationSize = 1)
 	@Column(name = "id", nullable = false)
 	private Long id;
 
@@ -43,7 +43,7 @@ public class PoolHashrate {
 	@JsonIgnore
 	private NetworkSnapshot network;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "pool_data_id", nullable = false)
 	@JsonIgnore
 	private PoolData poolData;

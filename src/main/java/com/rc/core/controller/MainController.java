@@ -1,9 +1,10 @@
 package com.rc.core.controller;
 
-import com.rc.general.domain.TrtlNetwork;
-import com.rc.general.service.GeneralService;
-import com.rc.general.service.NetworkService;
-import com.rc.pool.service.PoolService;
+import com.rc.general.domain.NetworkSnapshot;
+import com.rc.general.service.NetworkSnapshotService;
+import com.rc.pool.service.PoolDataService;
+import com.rc.pool.service.PoolHashrateService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -26,13 +27,13 @@ import javax.servlet.http.HttpServletRequest;
 public class MainController {
 
 	@Autowired
-	private NetworkService networkService;
+	private NetworkSnapshotService networkSnapshotService;
 
 	@Autowired
-	private GeneralService generalService;
+	private PoolDataService poolDataService;
 
 	@Autowired
-	private PoolService poolService;
+	private PoolHashrateService poolHashrateService;
 
 	@Value("${configs.pagination.page}")
 	private int pageSize;
@@ -41,23 +42,23 @@ public class MainController {
 	@RequestMapping("/")
 	public String mainPage(@SortDefault.SortDefaults({@SortDefault(sort = "id", direction = Sort.Direction.DESC)})
 	@PageableDefault(size = 20) Pageable pageable, Model model, HttpServletRequest request) {
-		Page<TrtlNetwork> pages = networkService.findAllNetworksByPage(pageable);
 
+		Page<NetworkSnapshot> pages = networkSnapshotService.findAllNetworksByPage(pageable);
 		model.addAttribute("networks", pages.getContent());
 		model.addAttribute("page", pages);
 		model.addAttribute("url", "/");
 		model.addAttribute("totalPages", pages.getTotalPages());
 		model.addAttribute("number", pages.getNumber());
-		model.addAttribute("sort", null);
+		model.addAttribute("sort", networkSnapshotService.parseUri(request.getQueryString(), true));
 		model.addAttribute("uri", request.getQueryString());
-		model.addAttribute("urii", networkService.parseUri(request.getQueryString()));
+		model.addAttribute("urii", networkSnapshotService.parseUri(request.getQueryString(), false));
 
 		return "home";
 	}
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
-	public @ResponseBody List<TrtlNetwork> getNetworks() {
-		return networkService.findAllNetworks();
+	public @ResponseBody List<NetworkSnapshot> getNetworks() {
+		return networkSnapshotService.findAllNetworks();
 	}
 
 }

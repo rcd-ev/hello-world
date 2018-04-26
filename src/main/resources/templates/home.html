@@ -15,27 +15,24 @@
 <body>
 
 <div class="container">
+    <a th:href="@{${url}}"><h3>Turtlecoin Mining Info</h3></a>
     <div th:if="${not #lists.isEmpty(networks)}">
-        <a th:href="@{${url}}"><h3>Turtlecoin Mining Info</h3></a>
-
-        <p th:text="'sort ' + ${sort}"></p>
-        <p th:text="'number ' + ${number}"></p>
-
+        
         <div class="resultTable">
             <table class="table table-striped" id="trtl">
                 <thead>
                 <tr>
                     <th>Id <a th:href="@{${url}(sort='id,asc',page=${number})}"><span class="glyphicon glyphicon-chevron-up"></span></a><a th:href="@{${url}(sort='id,desc',page=${number})}"><span class="glyphicon glyphicon-chevron-down"></span></a></th>
                     <th>Time <a th:href="@{${url}(sort='created,asc',page=${number})}"><span class="glyphicon glyphicon-chevron-up"></span></a><a th:href="@{${url}(sort='created,desc',page=${number})}"><span class="glyphicon glyphicon-chevron-down"></span></a></th>
-                    <th>Hashrate <a th:href="@{${url}(sort='generalNetwork.hashrate,asc',page=${number})}"><span class="glyphicon glyphicon-chevron-up"></span></a><a th:href="@{${url}(sort='generalNetwork.hashrate,desc',page=${number})}"><span class="glyphicon glyphicon-chevron-down"></span></a></th>
+                    <th>Hashrate <a th:href="@{${url}(sort='hashrate,asc',page=${number})}"><span class="glyphicon glyphicon-chevron-up"></span></a><a th:href="@{${url}(sort='hashrate,desc',page=${number})}"><span class="glyphicon glyphicon-chevron-down"></span></a></th>
                 </tr>
                 </thead>
+
                 <tbody>
                 <tr th:each="net : ${networks}">
-                    <td th:each="items : ${net.generalNetwork}" th:col-id="${items.id}" th:text="${items.id}"></td>
-                    <td th:each="items : ${net.generalNetwork}" th:col-id="${items.id}" th:text="${net.created}"></td>
-                    <td th:each="items : ${net.generalNetwork}" th:col-id="${items.id}"><a href="#my_modal" data-toggle="modal" th:data-id="${items.id}">
-                        <span th:each="items : ${net.generalNetwork}" th:text="${items.hashrate}"></span></a></td>
+                    <td th:col-id="${net.id}" th:text="${net.id}"></td>
+                    <td th:col-id="${net.id}" th:text="${net.created}"></td>
+                    <td th:col-id="${net.id}"><a href="#my_modal" data-toggle="modal" th:data-id="${net.id}"><span th:text="${net.hashrate} + ' H/s'"></span></a></td>
                 </tr>
                 </tbody>
             </table>
@@ -69,7 +66,7 @@
                 <input type="hidden" name="netId" id="netId" value=""/>
                 <script>
                     function showData(adr) {
-                        const apiURL = '/api/network';
+                        const apiURL = '/api/pool/info';
                         $.getJSON(apiURL + '?id=' + adr, function (data) {
                             var htmlText = "";
                             var dt = JSON.stringify(data);
@@ -78,9 +75,9 @@
                             htmlText = '<table class="table table-striped"><thead><tr><td>Name</td><td>Hashrate</td></tr></thead><tbody>';
                             $(".hashes-list").empty();
                                 htmlText += '<tr>';
-                                for (var pool in json.pools) {
-                                    htmlText += '<tr><td>' + json.pools[pool].name + '</td>';
-                                    htmlText += '<td>' + json.pools[pool].hashrate + '</td></tr>';
+                                for (var pool in json) {
+                                    htmlText += '<tr><td>' + json[pool].name + '</td>';
+                                    htmlText += '<td>' + json[pool].hashrate + ' H/s' + '</td></tr>';
                                 }
                                 htmlText += '</tr>';
                             htmlText += '</tbody></table>';
@@ -135,7 +132,7 @@
                     var tmp = "";
                     var dt = JSON.stringify(response);
                     jsonjs = JSON.parse(dt);
-                    if (snr == null || snr == desc) {
+                    if (snr == null || snr == "desc") {
                         reloadTable(jsonjs.content);
                     }
                 }
@@ -145,7 +142,7 @@
             $table.find('tbody').html('');
             var tbody = '';
             data.forEach(function(item){
-                tbody += '<tr><td col-id="'  + item.id + '">'  + item.id + '</td><td col-id="'  + item.id + '">'  + item.created + '</td><td col-id="'  + item.id + '"><a href="#my_modal" data-toggle="modal" data-id="'  + item.id + '"><span>'  + item.generalNetwork.hashrate + '</span></a></td></tr>';
+                tbody += '<tr><td col-id="'  + item.id + '">'  + item.id + '</td><td col-id="'  + item.id + '">'  + item.created + '</td><td col-id="'  + item.id + '"><a href="#my_modal" data-toggle="modal" data-id="'  + item.id + '"><span>'  + item.hashrate + ' H/s'+'</span></a></td></tr>';
             });
             $table.find('tbody').html(tbody);
         }

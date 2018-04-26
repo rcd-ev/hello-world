@@ -9,9 +9,11 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class LiveStatsScheduler {
 	private final LiveStatsService liveStatsService;
+	private final LiveStatsDataImpl liveStatsData;
 
 	@Scheduled(fixedRateString = "${configs.scheduler.rate}")
-	public void liveStat() {
-		liveStatsService.saveInformation();
+	public void liveStats() {
+		liveStatsData.fill();
 	}
+
 }
